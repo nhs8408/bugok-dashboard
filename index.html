@@ -61,7 +61,7 @@
                     <h2 class="text-lg font-black tracking-tight text-white flex items-center space-x-1.5">
                         <span id="main-today-off-title">내일은 정상 근무일입니다 💪</span>
                     </h2>
-                    <p class="text-xs text-slate-400 mt-0.5">상단 [📷 전표 스캔]으로 전표를 찍으면 배송일이 자동 등록됩니다.</p>
+                    <p class="text-xs text-slate-400 mt-0.5">상단 [📷 전표 스캔]으로 전표를 찍으면 배송일과 총판이 자동 등록됩니다.</p>
                 </div>
 
                 <!-- 브리핑 카운트 버튼 그리드 -->
@@ -108,7 +108,7 @@
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                         <span class="text-slate-400 text-[11px]">총판</span>
-                        <div class="text-sm font-black text-slate-800 mt-0.5"><span id="display-total-sales">0</span>원</div>
+                        <div class="text-sm font-black text-indigo-600 mt-0.5"><span id="display-total-sales">0</span>원</div>
                     </div>
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                         <span class="text-slate-400 text-[11px]">실판</span>
@@ -298,12 +298,12 @@
             <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                 <div class="flex items-center space-x-1.5">
                     <span class="text-base">🤖</span>
-                    <h3 class="font-bold text-sm text-slate-800">전표 분석 완료 (배송 등록)</h3>
+                    <h3 class="font-bold text-sm text-slate-800">전표 분석 완료 (배송 및 실적 반영)</h3>
                 </div>
                 <button onclick="closeScanResultModal()" class="text-slate-400 font-bold">✕</button>
             </div>
 
-            <p class="text-xs text-slate-500">AI가 추출한 내용입니다. 필요 시 수정 후 등록을 눌러주세요.</p>
+            <p class="text-xs text-slate-500">AI가 모델명과 접수금액을 추출했습니다. 등록 시 총판 실적이 자동 누적됩니다.</p>
 
             <div class="space-y-3 text-xs">
                 <div>
@@ -315,14 +315,21 @@
                     <input type="date" id="scan-input-date" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">구매/배송 품목</label>
-                    <input type="text" id="scan-input-item" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
+                    <label class="font-bold text-slate-700 block mb-1">모델명 (상품코드)</label>
+                    <input type="text" id="scan-input-item" placeholder="예: RP13C1022Z1" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold font-mono text-indigo-700">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">전표 금액 (총판에 누적 합산)</label>
+                    <div class="relative">
+                        <input type="number" id="scan-input-amount" placeholder="0" class="w-full bg-indigo-50/50 border border-indigo-200 rounded-xl p-2.5 font-bold text-indigo-900 pr-8">
+                        <span class="absolute right-3 top-2.5 text-xs font-bold text-indigo-400">원</span>
+                    </div>
                 </div>
             </div>
 
             <div class="flex space-x-2 pt-2">
                 <button onclick="closeScanResultModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition">취소</button>
-                <button onclick="confirmScanDelivery()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-xl font-bold text-xs shadow-md transition">일정에 자동 등록 ✨</button>
+                <button onclick="confirmScanDelivery()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-xl font-bold text-xs shadow-md transition">일정 & 총판 자동등록 ✨</button>
             </div>
         </div>
     </div>
@@ -332,8 +339,8 @@
     <div id="loading-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center space-y-3 shadow-2xl">
             <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <h4 class="font-black text-sm text-slate-800">전표 이미지 분석 중...</h4>
-            <p class="text-xs text-slate-500 leading-relaxed">AI가 매출전표에서 고객명과 배송일정을 읽어내고 있습니다. 잠시만 기다려주세요.</p>
+            <h4 class="font-black text-sm text-slate-800">전표 이미지 정밀 분석 중...</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">AI가 모델코드(상품코드), 배송일자, 접수금액을 읽어내고 있습니다. 잠시만 기다려주세요.</p>
         </div>
     </div>
 
@@ -438,7 +445,7 @@
 
     <!-- 푸터 -->
     <footer class="text-center py-4 text-[11px] text-slate-500">
-        Store Dashboard & Smart Quote Engine v3.8 (Gemini 3.8-Flash Support)
+        Store Dashboard & Smart Quote Engine v3.9 (Model Code & Sales Accumulation)
     </footer>
 
 
@@ -463,9 +470,9 @@
                 { id: 2, tag: '확인', name: '이LG 고객님', phone: '010-9876-5432', content: '구독 만료일 상담 문의' }
             ],
             logistics: [
-                { id: 3, name: '박해피 고객님', item: '65인치 OLED TV', type: 'today', schedule: '오늘 배송', dateOffset: 0, dateStr: '2026-11-04' },
-                { id: 6, name: '김스마트 고객님', item: '비스포크 냉장고', type: 'tomorrow', schedule: '내일 배송', dateOffset: 1, dateStr: '2026-11-05' },
-                { id: 7, name: '오미래 고객님', item: '정수기 올케어', type: 'upcoming', schedule: '2~5일 이내 배송', dateOffset: 3, dateStr: '2026-11-07' }
+                { id: 3, name: '박해피 고객님', item: 'KQ65QND90AFXKR', type: 'today', schedule: '오늘 배송', dateOffset: 0, dateStr: '2026-11-04' },
+                { id: 6, name: '김스마트 고객님', item: 'RF85C9001AP', type: 'tomorrow', schedule: '내일 배송', dateOffset: 1, dateStr: '2026-11-05' },
+                { id: 7, name: '오미래 고객님', item: 'WD25DB8995BZ', type: 'upcoming', schedule: '2~5일 이내 배송', dateOffset: 3, dateStr: '2026-11-07' }
             ],
             gift: [
                 { id: 4, name: '최감사 고객님', item: '프리미엄 사은품 세트', addr: '서울시 강남구...', status: '미발송' }
@@ -484,6 +491,7 @@
 
         let setOffDays = new Set();
         let vipState = {};
+        let currentPerf = { ...defaultPerformance };
         let currentVipTab = 'todo';
 
         // 앱 초기화 및 LocalStorage 로드
@@ -495,20 +503,20 @@
             vipState = savedVip ? JSON.parse(savedVip) : JSON.parse(JSON.stringify(defaultVipState));
 
             const savedPerf = localStorage.getItem(STORAGE_KEYS.PERF);
-            const perf = savedPerf ? JSON.parse(savedPerf) : defaultPerformance;
+            currentPerf = savedPerf ? JSON.parse(savedPerf) : { ...defaultPerformance };
 
-            document.getElementById('input-total-sales').value = perf.totalSales;
-            document.getElementById('input-net-sales').value = perf.netSales;
-            document.getElementById('input-sub-cnt').value = perf.subCnt;
-            document.getElementById('input-care-cnt').value = perf.careCnt;
+            document.getElementById('input-total-sales').value = currentPerf.totalSales;
+            document.getElementById('input-net-sales').value = currentPerf.netSales;
+            document.getElementById('input-sub-cnt').value = currentPerf.subCnt;
+            document.getElementById('input-care-cnt').value = currentPerf.careCnt;
 
-            document.getElementById('display-total-sales').textContent = Number(perf.totalSales).toLocaleString();
-            document.getElementById('display-net-sales').textContent = Number(perf.netSales).toLocaleString();
-            document.getElementById('display-sub-cnt').textContent = perf.subCnt;
-            document.getElementById('display-care-cnt').textContent = perf.careCnt;
+            document.getElementById('display-total-sales').textContent = Number(currentPerf.totalSales).toLocaleString();
+            document.getElementById('display-net-sales').textContent = Number(currentPerf.netSales).toLocaleString();
+            document.getElementById('display-sub-cnt').textContent = currentPerf.subCnt;
+            document.getElementById('display-care-cnt').textContent = currentPerf.careCnt;
         }
 
-        // ================= [AI 전표 스캔 엔진] =================
+        // ================= [AI 전표 스캔 엔진 (모델코드 및 총판금액 추출)] =================
         function triggerReceiptScan() {
             const key = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
             if (!key) {
@@ -540,7 +548,7 @@
             alert('API 키가 안전하게 저장되었습니다! 이제 전표 스캔을 사용하실 수 있습니다.');
         }
 
-        // 이미지 파일 처리 및 압축 후 Gemini 호출 (Google 공식 권장 gemini-3.8-flash 적용)
+        // 이미지 파일 처리 및 압축 후 Gemini 호출
         async function handleReceiptFile(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -548,15 +556,31 @@
             document.getElementById('loading-modal').classList.remove('hidden');
 
             try {
-                // 모바일 사진 고속 압축 (최대 너비 1400px)
                 const base64Data = await resizeImageToBase64(file, 1400, 0.85);
                 const apiKey = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
 
+                // 모델명(상품코드)과 접수금액(총판)을 명확하게 요구하는 프롬프트
                 const requestBody = {
                     contents: [{
                         parts: [
                             {
-                                text: "당신은 매장의 영수증/매출전표/주문서 분석 전문가입니다. 첨부된 이미지에서 [고객명], [배달일자 또는 배송예정일], [주요 구매 상품명]을 찾아내어 정확한 JSON 형식으로만 답하세요.\n\n출력 JSON 예시:\n{\n  \"name\": \"고객명 (예: 진선희)\",\n  \"item\": \"상품명 (예: 삼성 뚜껑형 김치냉장고)\",\n  \"dateStr\": \"YYYY-MM-DD 형식 (예: 2026-11-05)\"\n}\n마크다운 백틱(```json) 없이 순수 JSON만 정확하게 반환하세요."
+                                text: `당신은 전자제품 매장의 영수증/매출전표 분석 전문가입니다.
+첨부된 전표 이미지에서 아래 4가지 항목을 정확히 추출하여 오직 JSON 형식으로만 응답하세요.
+
+[필수 추출 규칙]
+1. name: 고객명 (예: "진선희")
+2. dateStr: 배달일자 또는 설치예정일자 (YYYY-MM-DD 형식, 특정 불가시 2026-11-04)
+3. item: 한글 상품명이 아니라 반드시 '상품코드' 또는 '모델명'(영문+숫자 혼합 형태, 예: RP13C1022Z1, RP22C3111S9 등)을 최우선으로 추출하세요.
+4. amount: 전표의 총 접수금액 또는 신용카드 결제금액 (숫자만 정수로 추출, 예: 1067250)
+
+출력 형식 예시:
+{
+  "name": "진선희",
+  "item": "RP13C1022Z1",
+  "dateStr": "2026-11-05",
+  "amount": 1067250
+}
+마크다운 백틱 없이 순수 JSON만 출력하세요.`
                             },
                             {
                                 inlineData: {
@@ -568,7 +592,6 @@
                     }]
                 };
 
-                // 구글 에러 지침에 따른 최신 모델 엔드포인트 순차 호출
                 const candidates = [
                     'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent',
                     'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent',
@@ -593,7 +616,6 @@
                         const data = await response.json();
                         if (data.error) {
                             lastError = data.error.message;
-                            console.warn(`${endpoint} 실패:`, data.error.message);
                             continue;
                         }
 
@@ -613,8 +635,6 @@
                 }
 
                 const rawText = resJson.candidates[0].content.parts[0].text.trim();
-                
-                // 마크다운 백틱 및 공백을 정제하고 JSON 파싱
                 const jsonMatch = rawText.match(/\{[\s\S]*\}/);
                 if (!jsonMatch) {
                     throw new Error("AI 응답 데이터에서 JSON 규격을 파싱할 수 없습니다.");
@@ -622,9 +642,10 @@
                 const parsed = JSON.parse(jsonMatch[0]);
 
                 // 결과 모달에 값 채우기
-                document.getElementById('scan-input-name').value = parsed.name || '진선희';
+                document.getElementById('scan-input-name').value = parsed.name || '고객님';
                 document.getElementById('scan-input-date').value = parsed.dateStr || '2026-11-05';
-                document.getElementById('scan-input-item').value = parsed.item || '삼성 뚜껑형 김치냉장고';
+                document.getElementById('scan-input-item').value = parsed.item || 'RP13C1022Z1';
+                document.getElementById('scan-input-amount').value = parsed.amount || 0;
 
                 document.getElementById('scan-result-modal').classList.remove('hidden');
 
@@ -633,7 +654,7 @@
                 console.error(err);
                 alert(`전표 분석 중 오류가 발생했습니다: ${err.message}\nAPI 키 또는 전표 사진 상태를 확인해주세요.`);
             } finally {
-                event.target.value = ''; // 동일 파일 재촬영 가능하도록 초기화
+                event.target.value = '';
             }
         }
 
@@ -673,11 +694,12 @@
             document.getElementById('scan-result-modal').classList.add('hidden');
         }
 
-        // 스캔 결과 확정 등록
+        // 스캔 결과 확정 등록 (배송일정 등록 + 총판 금액 누적 합산)
         function confirmScanDelivery() {
             const name = document.getElementById('scan-input-name').value.trim();
             const dateStr = document.getElementById('scan-input-date').value;
             const item = document.getElementById('scan-input-item').value.trim();
+            const amount = Number(document.getElementById('scan-input-amount').value || 0);
 
             if (!name || !dateStr) {
                 alert('고객명과 배송일자를 확인해주세요.');
@@ -703,7 +725,7 @@
                 type = 'upcoming';
             }
 
-            // VIP 상태에 배송 건 추가
+            // 1. VIP 배송 목록에 추가
             if (!vipState.logistics) vipState.logistics = [];
             vipState.logistics.push({
                 id: Date.now(),
@@ -712,15 +734,29 @@
                 type: type,
                 schedule: scheduleText,
                 dateOffset: diffDays,
-                dateStr: dateStr
+                dateStr: dateStr,
+                amount: amount
             });
-
-            // LocalStorage 저장
             localStorage.setItem(STORAGE_KEYS.VIP_STATE, JSON.stringify(vipState));
+
+            // 2. 총판 실적에 해당 전표 금액 누적 합산
+            if (amount > 0) {
+                currentPerf.totalSales = (currentPerf.totalSales || 0) + amount;
+                localStorage.setItem(STORAGE_KEYS.PERF, JSON.stringify(currentPerf));
+
+                // 대시보드 화면 및 수정 모달 값 갱신
+                document.getElementById('display-total-sales').textContent = Number(currentPerf.totalSales).toLocaleString();
+                document.getElementById('input-total-sales').value = currentPerf.totalSales;
+            }
 
             closeScanResultModal();
             renderWeeklyBar();
-            alert(`🎉 ${name}님의 배송 일정(${dateStr})이 성공적으로 등록되었습니다!`);
+
+            let msg = `🎉 ${name}님의 배송 일정 [${item} / ${dateStr}]이(가) 등록되었습니다!`;
+            if (amount > 0) {
+                msg += `\n💰 총판에 +${amount.toLocaleString()}원이 누적 합산되었습니다.\n(현재 총판: ${currentPerf.totalSales.toLocaleString()}원)`;
+            }
+            alert(msg);
         }
 
         // ================= [탭 및 렌더링 로직] =================
@@ -765,7 +801,7 @@
                 const matched = (vipState.logistics || []).filter(l => l.dateOffset === i || l.dateStr === dateStr);
                 let customerHtml = '';
                 if (matched.length > 0) {
-                    customerHtml = matched.map(l => `<div class="text-[9px] font-bold text-amber-300 truncate mt-0.5">${l.name.replace(' 고객님', '')}</div>`).join('');
+                    customerHtml = matched.map(l => `<div class="text-[9px] font-bold text-amber-300 truncate mt-0.5" title="${l.name} (${l.item})">${l.name.replace(' 고객님', '')}</div>`).join('');
                 }
 
                 html += `
@@ -816,7 +852,8 @@
                                 <span class="font-bold text-slate-800">${item.name}</span>
                                 <span class="text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-md font-bold">${item.schedule || '배송 예정'}</span>
                             </div>
-                            <p class="text-slate-600 font-medium">📦 품목: ${item.item}</p>
+                            <p class="text-slate-600 font-medium">📦 모델명: <span class="font-mono font-bold text-indigo-700">${item.item}</span></p>
+                            ${item.amount ? `<p class="text-slate-400 text-[11px]">💳 금액: ${item.amount.toLocaleString()}원</p>` : ''}
                         </div>
                     `;
                 });
@@ -926,7 +963,8 @@
                                 <div class="bg-white p-2.5 rounded-xl border border-slate-100 flex items-center justify-between text-xs shadow-sm">
                                     <div>
                                         <span class="font-bold text-slate-800">${item.name}</span>
-                                        <p class="text-slate-500 text-[11px]">${item.item} (${item.dateStr || ''})</p>
+                                        <p class="text-indigo-600 font-mono font-bold text-[11px]">${item.item}</p>
+                                        <p class="text-slate-400 text-[10px]">${item.dateStr || ''} ${item.amount ? '· ' + item.amount.toLocaleString() + '원' : ''}</p>
                                     </div>
                                     <button onclick="removeVipItem('logistics', ${item.id})" class="text-[11px] bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-2 py-1 rounded-lg transition">완료</button>
                                 </div>
@@ -976,7 +1014,8 @@
             const subCnt = Number(document.getElementById('input-sub-cnt')?.value || 0);
             const careCnt = Number(document.getElementById('input-care-cnt')?.value || 0);
 
-            localStorage.setItem(STORAGE_KEYS.PERF, JSON.stringify({ totalSales, netSales, subCnt, careCnt }));
+            currentPerf = { totalSales, netSales, subCnt, careCnt };
+            localStorage.setItem(STORAGE_KEYS.PERF, JSON.stringify(currentPerf));
 
             document.getElementById('display-total-sales').textContent = totalSales.toLocaleString();
             document.getElementById('display-net-sales').textContent = netSales.toLocaleString();
