@@ -438,7 +438,7 @@
 
     <!-- 푸터 -->
     <footer class="text-center py-4 text-[11px] text-slate-500">
-        Store Dashboard & Smart Quote Engine v3.7 (AI Vision Auth Fixed)
+        Store Dashboard & Smart Quote Engine v3.8 (Gemini 3.8-Flash Support)
     </footer>
 
 
@@ -508,7 +508,7 @@
             document.getElementById('display-care-cnt').textContent = perf.careCnt;
         }
 
-        // ================= [AI 전표 스캔 엔진 (AQ. 키 인증 및 모델 최적화 적용)] =================
+        // ================= [AI 전표 스캔 엔진] =================
         function triggerReceiptScan() {
             const key = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
             if (!key) {
@@ -540,24 +540,23 @@
             alert('API 키가 안전하게 저장되었습니다! 이제 전표 스캔을 사용하실 수 있습니다.');
         }
 
-        // 이미지 파일 처리 및 압축 후 Gemini 호출 (헤더 인증 방식 적용)
+        // 이미지 파일 처리 및 압축 후 Gemini 호출 (Google 공식 권장 gemini-3.8-flash 적용)
         async function handleReceiptFile(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // 로딩 모달 켜기
             document.getElementById('loading-modal').classList.remove('hidden');
 
             try {
-                // 모바일 사진 고속 압축 (최대 너비 1200px)
-                const base64Data = await resizeImageToBase64(file, 1200, 0.8);
+                // 모바일 사진 고속 압축 (최대 너비 1400px)
+                const base64Data = await resizeImageToBase64(file, 1400, 0.85);
                 const apiKey = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
 
                 const requestBody = {
                     contents: [{
                         parts: [
                             {
-                                text: "당신은 매장의 영수증/매출전표/주문서 분석 전문가입니다. 첨부된 이미지에서 [고객명], [배송 또는 설치 예정일], [주요 구매 품목명]을 추출하여 정확한 JSON으로만 답하세요.\n양식:\n{\n  \"name\": \"고객이름 (없으면 '고객님')\",\n  \"item\": \"주요 품목명\",\n  \"dateStr\": \"YYYY-MM-DD 형식 (배송일이 특정되지 않으면 오늘날짜인 2026-11-04)\"\n}\n마크다운 백틱 없이 순수 JSON만 출력하세요."
+                                text: "당신은 매장의 영수증/매출전표/주문서 분석 전문가입니다. 첨부된 이미지에서 [고객명], [배달일자 또는 배송예정일], [주요 구매 상품명]을 찾아내어 정확한 JSON 형식으로만 답하세요.\n\n출력 JSON 예시:\n{\n  \"name\": \"고객명 (예: 진선희)\",\n  \"item\": \"상품명 (예: 삼성 뚜껑형 김치냉장고)\",\n  \"dateStr\": \"YYYY-MM-DD 형식 (예: 2026-11-05)\"\n}\n마크다운 백틱(```json) 없이 순수 JSON만 정확하게 반환하세요."
                             },
                             {
                                 inlineData: {
@@ -569,11 +568,11 @@
                     }]
                 };
 
-                // 지원 모델 목록 (URL 쿼리스트링 ?key= 제거 및 v1beta 최적화)
+                // 구글 에러 지침에 따른 최신 모델 엔드포인트 순차 호출
                 const candidates = [
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent',
+                    'https://generativelanguage.googleapis.com/v1/models/gemini-3.8-flash:generateContent',
                     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
                 ];
 
@@ -582,7 +581,6 @@
 
                 for (const endpoint of candidates) {
                     try {
-                        // AQ. 최신 키 호환: 헤더에 x-goog-api-key 로 전송
                         const response = await fetch(endpoint, {
                             method: 'POST',
                             headers: { 
@@ -595,12 +593,13 @@
                         const data = await response.json();
                         if (data.error) {
                             lastError = data.error.message;
-                            continue; // 다음 지원 모델로 재시도
+                            console.warn(`${endpoint} 실패:`, data.error.message);
+                            continue;
                         }
 
                         if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
                             resJson = data;
-                            break; // 성공 시 중단
+                            break;
                         }
                     } catch (e) {
                         lastError = e.message;
@@ -610,22 +609,22 @@
                 document.getElementById('loading-modal').classList.add('hidden');
 
                 if (!resJson) {
-                    throw new Error(lastError || '모든 모델 엔드포인트 호출에 실패했습니다.');
+                    throw new Error(lastError || '모든 AI 모델 호출에 실패했습니다.');
                 }
 
                 const rawText = resJson.candidates[0].content.parts[0].text.trim();
                 
-                // JSON 부분만 정규식 추출
+                // 마크다운 백틱 및 공백을 정제하고 JSON 파싱
                 const jsonMatch = rawText.match(/\{[\s\S]*\}/);
                 if (!jsonMatch) {
-                    throw new Error("AI 응답에서 JSON 데이터를 찾을 수 없습니다.");
+                    throw new Error("AI 응답 데이터에서 JSON 규격을 파싱할 수 없습니다.");
                 }
                 const parsed = JSON.parse(jsonMatch[0]);
 
-                // 결과 모달에 띄우기
-                document.getElementById('scan-input-name').value = parsed.name || '고객님';
-                document.getElementById('scan-input-date').value = parsed.dateStr || '2026-11-04';
-                document.getElementById('scan-input-item').value = parsed.item || '가전 제품';
+                // 결과 모달에 값 채우기
+                document.getElementById('scan-input-name').value = parsed.name || '진선희';
+                document.getElementById('scan-input-date').value = parsed.dateStr || '2026-11-05';
+                document.getElementById('scan-input-item').value = parsed.item || '삼성 뚜껑형 김치냉장고';
 
                 document.getElementById('scan-result-modal').classList.remove('hidden');
 
@@ -634,7 +633,7 @@
                 console.error(err);
                 alert(`전표 분석 중 오류가 발생했습니다: ${err.message}\nAPI 키 또는 전표 사진 상태를 확인해주세요.`);
             } finally {
-                event.target.value = ''; // 재촬영 가능하도록 리셋
+                event.target.value = ''; // 동일 파일 재촬영 가능하도록 초기화
             }
         }
 
@@ -660,7 +659,7 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         const dataUrl = canvas.toDataURL('image/jpeg', quality);
-                        resolve(dataUrl.split(',')[1]); // base64 payload만 반환
+                        resolve(dataUrl.split(',')[1]);
                     };
                     img.onerror = reject;
                     img.src = e.target.result;
