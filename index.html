@@ -352,7 +352,7 @@
                 </p>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">Google Gemini API Key</label>
-                    <input type="password" id="input-gemini-key" placeholder="AIzaSy..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="password" id="input-gemini-key" placeholder="AQ... 또는 AIzaSy..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                     <p class="text-[11px] text-slate-500">
@@ -438,7 +438,7 @@
 
     <!-- 푸터 -->
     <footer class="text-center py-4 text-[11px] text-slate-500">
-        Store Dashboard & Smart Quote Engine v3.6 (AI Vision Powered)
+        Store Dashboard & Smart Quote Engine v3.7 (AI Vision Auth Fixed)
     </footer>
 
 
@@ -508,7 +508,7 @@
             document.getElementById('display-care-cnt').textContent = perf.careCnt;
         }
 
-        // ================= [AI 전표 스캔 엔진 (수정 완료)] =================
+        // ================= [AI 전표 스캔 엔진 (AQ. 키 인증 및 모델 최적화 적용)] =================
         function triggerReceiptScan() {
             const key = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
             if (!key) {
@@ -540,7 +540,7 @@
             alert('API 키가 안전하게 저장되었습니다! 이제 전표 스캔을 사용하실 수 있습니다.');
         }
 
-        // 이미지 파일 처리 및 압축 후 Gemini 호출 (Fallback 내장)
+        // 이미지 파일 처리 및 압축 후 Gemini 호출 (헤더 인증 방식 적용)
         async function handleReceiptFile(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -569,12 +569,12 @@
                     }]
                 };
 
-                // 지원 모델 순차 시도 (v1 정식 버전 및 최신 flash 모델 호환)
+                // 지원 모델 목록 (URL 쿼리스트링 ?key= 제거 및 v1beta 최적화)
                 const candidates = [
-                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
                     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
                 ];
 
                 let resJson = null;
@@ -582,9 +582,13 @@
 
                 for (const endpoint of candidates) {
                     try {
-                        const response = await fetch(`${endpoint}?key=${apiKey}`, {
+                        // AQ. 최신 키 호환: 헤더에 x-goog-api-key 로 전송
+                        const response = await fetch(endpoint, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'x-goog-api-key': apiKey 
+                            },
                             body: JSON.stringify(requestBody)
                         });
 
@@ -611,7 +615,7 @@
 
                 const rawText = resJson.candidates[0].content.parts[0].text.trim();
                 
-                // 마크다운이나 앞뒤 설명 문구가 붙어도 JSON 부분만 정확히 추출
+                // JSON 부분만 정규식 추출
                 const jsonMatch = rawText.match(/\{[\s\S]*\}/);
                 if (!jsonMatch) {
                     throw new Error("AI 응답에서 JSON 데이터를 찾을 수 없습니다.");
@@ -634,7 +638,7 @@
             }
         }
 
-        // 브라우저 캔버스를 이용한 모바일 사진 초고속 리사이징
+        // 브라우저 캔버스를 이용한 모바일 사진 고속 리사이징
         function resizeImageToBase64(file, maxDimension, quality) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -681,7 +685,7 @@
                 return;
             }
 
-            // 기준일(2026-11-04)과 날짜 차이(offset) 계산
+            // 기준일(2026-11-04)과 날짜 차이 계산
             const baseDate = new Date('2026-11-04');
             const targetDate = new Date(dateStr);
             const diffDays = Math.round((targetDate - baseDate) / (1000 * 60 * 60 * 24));
