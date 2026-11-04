@@ -508,7 +508,7 @@
             document.getElementById('display-care-cnt').textContent = perf.careCnt;
         }
 
-        // ================= [AI 전표 스캔 엔진] =================
+        // ================= [AI 전표 스캔 엔진 (수정 완료)] =================
         function triggerReceiptScan() {
             const key = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
             if (!key) {
@@ -540,7 +540,7 @@
             alert('API 키가 안전하게 저장되었습니다! 이제 전표 스캔을 사용하실 수 있습니다.');
         }
 
-        // 이미지 파일 처리 및 압축 후 Gemini 호출
+        // 이미지 파일 처리 및 압축 후 Gemini 호출 (Fallback 내장)
         async function handleReceiptFile(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -553,37 +553,70 @@
                 const base64Data = await resizeImageToBase64(file, 1200, 0.8);
                 const apiKey = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
 
-                // Gemini API 호출
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [
-                                {
-                                    text: "당신은 매장의 영수증/매출전표/주문서 분석 전문가입니다. 첨부된 이미지에서 [고객명], [배송 또는 설치 예정일], [주요 구매 품목명]을 추출하여 정확한 JSON으로만 답하세요.\n양식:\n{\n  \"name\": \"고객이름 (없으면 '고객님')\",\n  \"item\": \"주요 품목명\",\n  \"dateStr\": \"YYYY-MM-DD 형식 (배송일이 특정되지 않으면 오늘날짜인 2026-11-04)\"\n}\n마크다운 백틱 없이 순수 JSON만 출력하세요."
-                                },
-                                {
-                                    inlineData: {
-                                        mimeType: "image/jpeg",
-                                        data: base64Data
-                                    }
+                const requestBody = {
+                    contents: [{
+                        parts: [
+                            {
+                                text: "당신은 매장의 영수증/매출전표/주문서 분석 전문가입니다. 첨부된 이미지에서 [고객명], [배송 또는 설치 예정일], [주요 구매 품목명]을 추출하여 정확한 JSON으로만 답하세요.\n양식:\n{\n  \"name\": \"고객이름 (없으면 '고객님')\",\n  \"item\": \"주요 품목명\",\n  \"dateStr\": \"YYYY-MM-DD 형식 (배송일이 특정되지 않으면 오늘날짜인 2026-11-04)\"\n}\n마크다운 백틱 없이 순수 JSON만 출력하세요."
+                            },
+                            {
+                                inlineData: {
+                                    mimeType: "image/jpeg",
+                                    data: base64Data
                                 }
-                            ]
-                        }]
-                    })
-                });
+                            }
+                        ]
+                    }]
+                };
 
-                const resJson = await response.json();
+                // 지원 모델 순차 시도 (v1 정식 버전 및 최신 flash 모델 호환)
+                const candidates = [
+                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+                ];
+
+                let resJson = null;
+                let lastError = null;
+
+                for (const endpoint of candidates) {
+                    try {
+                        const response = await fetch(`${endpoint}?key=${apiKey}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestBody)
+                        });
+
+                        const data = await response.json();
+                        if (data.error) {
+                            lastError = data.error.message;
+                            continue; // 다음 지원 모델로 재시도
+                        }
+
+                        if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+                            resJson = data;
+                            break; // 성공 시 중단
+                        }
+                    } catch (e) {
+                        lastError = e.message;
+                    }
+                }
+
                 document.getElementById('loading-modal').classList.add('hidden');
 
-                if (resJson.error) {
-                    throw new Error(resJson.error.message);
+                if (!resJson) {
+                    throw new Error(lastError || '모든 모델 엔드포인트 호출에 실패했습니다.');
                 }
 
                 const rawText = resJson.candidates[0].content.parts[0].text.trim();
-                const cleanedJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-                const parsed = JSON.parse(cleanedJson);
+                
+                // 마크다운이나 앞뒤 설명 문구가 붙어도 JSON 부분만 정확히 추출
+                const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) {
+                    throw new Error("AI 응답에서 JSON 데이터를 찾을 수 없습니다.");
+                }
+                const parsed = JSON.parse(jsonMatch[0]);
 
                 // 결과 모달에 띄우기
                 document.getElementById('scan-input-name').value = parsed.name || '고객님';
