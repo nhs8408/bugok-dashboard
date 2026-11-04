@@ -40,7 +40,7 @@
                             <span>✨</span><span>TODAY BRIEFING</span>
                         </span>
                     </div>
-                    <span class="text-[11px] text-slate-400 font-medium">실시간 동기화</span>
+                    <span class="text-[11px] text-emerald-400 font-medium">● 로컬 자동 저장됨</span>
                 </div>
 
                 <!-- 타이틀 및 내일 휴무 여부 -->
@@ -55,26 +55,26 @@
                 <div class="grid grid-cols-4 gap-2 pt-1">
                     <button onclick="openVipCenterWithTab('todo')" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-2.5 text-center transition group">
                         <div class="text-[10px] text-slate-400 group-hover:text-indigo-300">긴급 할일</div>
-                        <div id="briefing-todo-cnt" class="text-sm font-black text-white mt-0.5">2건</div>
+                        <div id="briefing-todo-cnt" class="text-sm font-black text-white mt-0.5">0건</div>
                     </button>
                     <button onclick="openVipCenterWithTab('logistics')" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-2.5 text-center transition group">
                         <div class="text-[10px] text-slate-400 group-hover:text-indigo-300">배송일정</div>
-                        <div id="briefing-logistics-cnt" class="text-sm font-black text-white mt-0.5">3건</div>
+                        <div id="briefing-logistics-cnt" class="text-sm font-black text-white mt-0.5">0건</div>
                     </button>
                     <button onclick="openVipCenterWithTab('gift')" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-2.5 text-center transition group">
                         <div class="text-[10px] text-slate-400 group-hover:text-indigo-300">사은품미지급</div>
-                        <div id="briefing-gift-cnt" class="text-sm font-black text-white mt-0.5">1건</div>
+                        <div id="briefing-gift-cnt" class="text-sm font-black text-white mt-0.5">0건</div>
                     </button>
                     <button onclick="openVipCenterWithTab('unpurchased')" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-2.5 text-center transition group">
                         <div class="text-[10px] text-slate-400 group-hover:text-indigo-300">미구매상담</div>
-                        <div id="briefing-unp-cnt" class="text-sm font-black text-white mt-0.5">1건</div>
+                        <div id="briefing-unp-cnt" class="text-sm font-black text-white mt-0.5">0건</div>
                     </button>
                 </div>
 
                 <!-- 주간 캘린더 미니 바 -->
                 <div class="pt-2 border-t border-white/10 space-y-2">
                     <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                        <span>📅 11월 주간 일정 및 배송 현황 (날짜 터치 시 상세 확인)</span>
+                        <span>📅 11월 주간 일정 및 배송 현황</span>
                         <button onclick="switchTab('offdays')" class="text-indigo-300 hover:text-white font-bold underline">휴무 관리 ↗</button>
                     </div>
                     <div id="weekly-bar" class="grid grid-cols-7 gap-1">
@@ -95,26 +95,26 @@
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                         <span class="text-slate-400 text-[11px]">총판</span>
-                        <div class="text-sm font-black text-slate-800 mt-0.5"><span id="display-total-sales">48,500,000</span>원</div>
+                        <div class="text-sm font-black text-slate-800 mt-0.5"><span id="display-total-sales">0</span>원</div>
                     </div>
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                         <span class="text-slate-400 text-[11px]">실판</span>
-                        <div class="text-sm font-black text-emerald-600 mt-0.5"><span id="display-net-sales">14,200,000</span>원</div>
+                        <div class="text-sm font-black text-emerald-600 mt-0.5"><span id="display-net-sales">0</span>원</div>
                     </div>
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                         <span class="text-slate-400 text-[11px]">가전 구독 유치</span>
-                        <div class="text-sm font-black text-slate-800 mt-0.5"><span id="display-sub-cnt">38</span>건</div>
+                        <div class="text-sm font-black text-slate-800 mt-0.5"><span id="display-sub-cnt">0</span>건</div>
                     </div>
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                         <span class="text-slate-400 text-[11px]">올케어 가입</span>
-                        <div class="text-sm font-black text-slate-800 mt-0.5"><span id="display-care-cnt">24</span>건</div>
+                        <div class="text-sm font-black text-slate-800 mt-0.5"><span id="display-care-cnt">0</span>건</div>
                     </div>
                 </div>
             </div>
 
             <!-- 주요 메뉴 카드 리스트 -->
             <div class="space-y-2.5">
-                <!-- 플랜 계산기 버튼 (대시보드 내부 탭으로 열기) -->
+                <!-- 플랜 계산기 버튼 -->
                 <button onclick="switchTab('hiplan')" class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 p-4 rounded-2xl flex items-center justify-between shadow-sm transition group text-left">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg font-bold">🧮</div>
@@ -207,7 +207,7 @@
                     <button onclick="switchTab('main')" class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-xl">뒤로</button>
                 </div>
 
-                <p class="text-xs text-slate-500">날짜를 터치하여 매장 지정 휴무일을 설정하거나 해제하세요. (선택 시 붉은색 표시)</p>
+                <p class="text-xs text-slate-500">날짜를 터치하여 매장 지정 휴무일을 설정하거나 해제하세요. (설정 즉시 저장됩니다)</p>
 
                 <!-- 월간 달력 그리드 -->
                 <div id="calendar-month-grid" class="grid grid-cols-7 gap-1 text-center">
@@ -217,7 +217,7 @@
                 <!-- 캘린더 연동 안내 및 다운로드 버튼 -->
                 <div class="pt-3 border-t border-slate-100 space-y-2">
                     <h3 class="font-bold text-xs text-slate-800">🌐 구글 / 스마트폰 캘린더 완벽 연동 (.ics)</h3>
-                    <p class="text-[11px] text-slate-500">휴무일이 묶이지 않고 개별 당일 일정으로 완벽히 분리 등록되는 표준 파일을 다운로드합니다.</p>
+                    <p class="text-[11px] text-slate-500">지정한 휴무일을 캘린더 앱에 등록할 수 있는 표준 파일을 다운로드합니다.</p>
                     
                     <div class="flex space-x-2 pt-1">
                         <button onclick="downloadIcsFile()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-xs shadow-sm transition text-center">
@@ -243,7 +243,6 @@
                     <button onclick="switchTab('main')" class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-xl">뒤로</button>
                 </div>
 
-                <!-- 계산기 입력 및 결과 인터페이스 -->
                 <div class="space-y-3 text-xs">
                     <div>
                         <label class="font-bold text-slate-700 block mb-1">월 정상 구독료 (원)</label>
@@ -276,7 +275,6 @@
                         </select>
                     </div>
 
-                    <!-- 결과 요약 박스 -->
                     <div class="bg-indigo-900 text-white p-4 rounded-2xl space-y-2 mt-4 shadow-lg">
                         <div class="flex justify-between text-slate-300 text-[11px]">
                             <span>월 총 혜택 할인금액</span>
@@ -298,7 +296,6 @@
     <div id="vip-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
             
-            <!-- 모달 헤더 -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center space-x-2">
                     <span class="text-base">👑</span>
@@ -307,7 +304,6 @@
                 <button onclick="closeVipCenter()" class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold text-xs flex items-center justify-center">✕</button>
             </div>
 
-            <!-- VIP 서브 탭 메뉴 -->
             <div class="flex bg-slate-100 p-1 rounded-2xl text-xs font-bold text-slate-600">
                 <button onclick="switchVipTab('todo')" id="vip-tab-todo" class="flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600">긴급할일</button>
                 <button onclick="switchVipTab('logistics')" id="vip-tab-logistics" class="flex-1 py-1.5 rounded-xl">배송일정</button>
@@ -315,12 +311,10 @@
                 <button onclick="switchVipTab('unpurchased')" id="vip-tab-unpurchased" class="flex-1 py-1.5 rounded-xl">미구매상담</button>
             </div>
 
-            <!-- 모달 콘텐츠 영역 -->
             <div id="vip-modal-content" class="flex-1 overflow-y-auto space-y-2.5 pr-1">
                 <!-- JS 렌더링 -->
             </div>
 
-            <!-- 모달 하단 닫기 -->
             <button onclick="closeVipCenter()" class="w-full py-2.5 bg-slate-800 text-white rounded-2xl font-bold text-xs shadow-sm hover:bg-slate-900 transition">
                 확인 및 닫기
             </button>
@@ -339,19 +333,19 @@
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">총판 (원)</label>
-                    <input type="number" id="input-total-sales" value="48500000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold">
+                    <input type="number" id="input-total-sales" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold">
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">실판 (원)</label>
-                    <input type="number" id="input-net-sales" value="14200000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold">
+                    <input type="number" id="input-net-sales" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold">
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">가전 구독 유치 건수</label>
-                    <input type="number" id="input-sub-cnt" value="38" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold">
+                    <input type="number" id="input-sub-cnt" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold">
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">올케어 가입 건수</label>
-                    <input type="number" id="input-care-cnt" value="24" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold">
+                    <input type="number" id="input-care-cnt" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold">
                 </div>
             </div>
 
@@ -383,17 +377,23 @@
     </footer>
 
 
-    <!-- 자바스크립트 로직 -->
+    <!-- ================= 자바스크립트 로직 (LocalStorage 저장 포함) ================= -->
     <script>
-        // 지정 휴무일 데이터 세트
-        let setOffDays = new Set([
+        // LocalStorage 키 관리
+        const STORAGE_KEYS = {
+            OFF_DAYS: 'store_dashboard_off_days',
+            VIP_STATE: 'store_dashboard_vip_state',
+            PERF: 'store_dashboard_performance'
+        };
+
+        // 기본 초기 데이터
+        const defaultOffDays = [
             '2026-11-02', '2026-11-03', '2026-11-09', '2026-11-10',
             '2026-11-14', '2026-11-16', '2026-11-17', '2026-11-22',
             '2026-11-23', '2026-11-26', '2026-11-27', '2026-11-28'
-        ]);
+        ];
 
-        // VIP 통합 데이터 (배송 일정 카테고리별 분류)
-        let vipState = {
+        const defaultVipState = {
             todo: [
                 { id: 1, tag: '긴급', name: '김삼성 고객님', phone: '010-1234-5678', content: '견적서 재전송 요청건' },
                 { id: 2, tag: '확인', name: '이LG 고객님', phone: '010-9876-5432', content: '구독 만료일 상담 문의' }
@@ -411,9 +411,69 @@
             ]
         };
 
+        const defaultPerformance = {
+            totalSales: 48500000,
+            netSales: 14200000,
+            subCnt: 38,
+            careCnt: 24
+        };
+
+        // 앱 상태 변수
+        let setOffDays = new Set();
+        let vipState = {};
         let currentVipTab = 'todo';
 
-        // 탭 전환 함수
+        // 1. 데이터 로드 함수 (저장된 게 있으면 로드, 없으면 기본값)
+        function initAppStorage() {
+            // 휴무일 로드
+            const savedOffDays = localStorage.getItem(STORAGE_KEYS.OFF_DAYS);
+            if (savedOffDays) {
+                try {
+                    setOffDays = new Set(JSON.parse(savedOffDays));
+                } catch(e) {
+                    setOffDays = new Set(defaultOffDays);
+                }
+            } else {
+                setOffDays = new Set(defaultOffDays);
+            }
+
+            // VIP 데이터 로드
+            const savedVip = localStorage.getItem(STORAGE_KEYS.VIP_STATE);
+            if (savedVip) {
+                try {
+                    vipState = JSON.parse(savedVip);
+                } catch(e) {
+                    vipState = JSON.parse(JSON.stringify(defaultVipState));
+                }
+            } else {
+                vipState = JSON.parse(JSON.stringify(defaultVipState));
+            }
+
+            // 실적 데이터 로드
+            const savedPerf = localStorage.getItem(STORAGE_KEYS.PERF);
+            let perf = defaultPerformance;
+            if (savedPerf) {
+                try {
+                    perf = JSON.parse(savedPerf);
+                } catch(e) {
+                    perf = defaultPerformance;
+                }
+            }
+
+            // 인풋 필드 채우기
+            document.getElementById('input-total-sales').value = perf.totalSales;
+            document.getElementById('input-net-sales').value = perf.netSales;
+            document.getElementById('input-sub-cnt').value = perf.subCnt;
+            document.getElementById('input-care-cnt').value = perf.careCnt;
+
+            // 디스플레이 갱신
+            document.getElementById('display-total-sales').textContent = Number(perf.totalSales).toLocaleString();
+            document.getElementById('display-net-sales').textContent = Number(perf.netSales).toLocaleString();
+            document.getElementById('display-sub-cnt').textContent = perf.subCnt;
+            document.getElementById('display-care-cnt').textContent = perf.careCnt;
+        }
+
+        // 탭 전환
         function switchTab(tableName) {
             const tabs = ['main', 'subscription', 'offdays', 'hiplan'];
             tabs.forEach(t => {
@@ -433,62 +493,20 @@
             }
         }
 
-        // VIP 센터 및 탭 열기 함수들
-        function openVipCenterWithTab(tabName) {
-            currentVipTab = tabName;
-            const modal = document.getElementById('vip-modal');
-            if (modal) modal.classList.remove('hidden');
-            
-            ['todo', 'logistics', 'gift', 'unpurchased'].forEach(t => {
-                const btn = document.getElementById(`vip-tab-${t}`);
-                if (btn) {
-                    if (t === tabName) {
-                        btn.className = 'flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 font-bold';
-                    } else {
-                        btn.className = 'flex-1 py-1.5 rounded-xl text-slate-600';
-                    }
-                }
-            });
-            renderVipCenter();
-        }
-
-        function switchVipTab(tabName) {
-            currentVipTab = tabName;
-            ['todo', 'logistics', 'gift', 'unpurchased'].forEach(t => {
-                const btn = document.getElementById(`vip-tab-${t}`);
-                if (btn) {
-                    if (t === tabName) {
-                        btn.className = 'flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 font-bold';
-                    } else {
-                        btn.className = 'flex-1 py-1.5 rounded-xl text-slate-600';
-                    }
-                }
-            });
-            renderVipCenter();
-        }
-
-        function closeVipCenter() {
-            const modal = document.getElementById('vip-modal');
-            if (modal) modal.classList.add('hidden');
-            renderWeeklyBar();
-        }
-
-        // 주간 휴무 바 렌더링 및 내일 휴무 자동 판단
+        // 주간 브리핑 바 렌더링
         function renderWeeklyBar() {
             const bar = document.getElementById('weekly-bar');
             if (!bar) return;
 
-            const today = new Date('2026-11-04'); // 기준일
+            const today = new Date('2026-11-04');
             let html = '';
 
-            // 내일 날짜 계산 (2026-11-05)
             const tomorrow = new Date(today);
             tomorrow.setDate(today.getDate() + 1);
             const tomorrowStr = tomorrow.toISOString().split('T')[0];
             const isTomorrowOff = setOffDays.has(tomorrowStr);
 
             const titleEl = document.getElementById('main-today-off-title');
-
             if (isTomorrowOff) {
                 if (titleEl) titleEl.textContent = '내일 드디어 휴무입니다! 🥳';
             } else {
@@ -507,14 +525,12 @@
                 let bgClass = isOff ? 'bg-indigo-500/40 text-indigo-100 border-indigo-400/40' : 'bg-white/5 text-slate-300 border-transparent';
                 if (isToday) bgClass += ' ring-2 ring-white font-extrabold';
 
-                // 해당 날짜의 배송 고객 이름 매칭
-                const matchedLogistics = vipState.logistics.filter(l => l.dateOffset === i || l.dateStr === dateStr);
+                const matchedLogistics = (vipState.logistics || []).filter(l => l.dateOffset === i || l.dateStr === dateStr);
                 let customerNamesHtml = '';
                 if (matchedLogistics.length > 0) {
                     customerNamesHtml = matchedLogistics.map(l => `<div class="text-[9px] font-bold text-amber-300 truncate mt-0.5">${l.name.replace(' 고객님', '')}</div>`).join('');
                 }
 
-                // 각 일정칸 생성 (클릭 시 상세 모달 오픈)
                 html += `
                     <div onclick="openDateDetail('${dateStr}', '${monthDayLabel(d)} (${dayOfWeekName})', ${i})" class="cursor-pointer hover:bg-white/10 text-center p-1.5 rounded-xl border ${bgClass} flex flex-col justify-between transition" style="min-height: 95px;">
                         <div>
@@ -531,23 +547,23 @@
             }
             bar.innerHTML = html;
 
-            // 브리핑 카운트 실시간 반영
+            // 브리핑 카운트 갱신
             const todoCnt = document.getElementById('briefing-todo-cnt');
             const logisticsCnt = document.getElementById('briefing-logistics-cnt');
             const giftCnt = document.getElementById('briefing-gift-cnt');
             const unpCnt = document.getElementById('briefing-unp-cnt');
 
-            if (todoCnt) todoCnt.textContent = `${vipState.todo.length}건`;
-            if (logisticsCnt) logisticsCnt.textContent = `${vipState.logistics.length}건`;
-            if (giftCnt) giftCnt.textContent = `${vipState.gift.length}건`;
-            if (unpCnt) unpCnt.textContent = `${vipState.unpurchased.length}건`;
+            if (todoCnt) todoCnt.textContent = `${vipState.todo?.length || 0}건`;
+            if (logisticsCnt) logisticsCnt.textContent = `${vipState.logistics?.length || 0}건`;
+            if (giftCnt) giftCnt.textContent = `${vipState.gift?.length || 0}건`;
+            if (unpCnt) unpCnt.textContent = `${vipState.unpurchased?.length || 0}건`;
         }
 
         function monthDayLabel(d) {
             return `${d.getMonth() + 1}월 ${d.getDate()}일`;
         }
 
-        // 날짜별 배송 상세 모달 열기 함수
+        // 날짜별 배송 상세 모달 열기
         function openDateDetail(dateStr, dateTitle, offset) {
             const modal = document.getElementById('date-detail-modal');
             const titleEl = document.getElementById('date-modal-title');
@@ -556,7 +572,7 @@
 
             titleEl.textContent = `📅 ${dateTitle} 배송 및 휴무 일정`;
 
-            const matched = vipState.logistics.filter(l => l.dateOffset === offset || l.dateStr === dateStr);
+            const matched = (vipState.logistics || []).filter(l => l.dateOffset === offset || l.dateStr === dateStr);
             const isOff = setOffDays.has(dateStr);
 
             let html = `
@@ -591,7 +607,7 @@
             if (modal) modal.classList.add('hidden');
         }
 
-        // 월간 달력 렌더링 (휴무 지정용)
+        // 월간 달력 렌더링 및 휴무일 저장
         function renderMonthCalendar() {
             const grid = document.getElementById('calendar-month-grid');
             if (!grid) return;
@@ -602,7 +618,7 @@
             });
 
             const daysInMonth = 30;
-            const startDay = 0; // 일요일
+            const startDay = 0;
 
             for (let i = 0; i < startDay; i++) {
                 grid.innerHTML += `<div></div>`;
@@ -625,6 +641,8 @@
                     } else {
                         setOffDays.add(dayStr);
                     }
+                    // 휴무일 변경 시 즉시 LocalStorage에 영구 저장
+                    localStorage.setItem(STORAGE_KEYS.OFF_DAYS, JSON.stringify(Array.from(setOffDays)));
                     renderMonthCalendar();
                     renderWeeklyBar();
                 };
@@ -632,7 +650,7 @@
             }
         }
 
-        // ICS 파일 다운로드 생성
+        // ICS 파일 다운로드
         function downloadIcsFile() {
             let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Store Dashboard//OffDays//KO\n";
             setOffDays.forEach(dateStr => {
@@ -656,7 +674,42 @@
             document.body.removeChild(link);
         }
 
-        // VIP 센터 렌더링 (배송 일정 주간 캘린더 형태 포함)
+        // VIP 통합 센터 렌더링
+        function openVipCenterWithTab(tabName) {
+            currentVipTab = tabName;
+            const modal = document.getElementById('vip-modal');
+            if (modal) modal.classList.remove('hidden');
+            
+            ['todo', 'logistics', 'gift', 'unpurchased'].forEach(t => {
+                const btn = document.getElementById(`vip-tab-${t}`);
+                if (btn) {
+                    btn.className = (t === tabName) 
+                        ? 'flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 font-bold'
+                        : 'flex-1 py-1.5 rounded-xl text-slate-600';
+                }
+            });
+            renderVipCenter();
+        }
+
+        function switchVipTab(tabName) {
+            currentVipTab = tabName;
+            ['todo', 'logistics', 'gift', 'unpurchased'].forEach(t => {
+                const btn = document.getElementById(`vip-tab-${t}`);
+                if (btn) {
+                    btn.className = (t === tabName)
+                        ? 'flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 font-bold'
+                        : 'flex-1 py-1.5 rounded-xl text-slate-600';
+                }
+            });
+            renderVipCenter();
+        }
+
+        function closeVipCenter() {
+            const modal = document.getElementById('vip-modal');
+            if (modal) modal.classList.add('hidden');
+            renderWeeklyBar();
+        }
+
         function renderVipCenter() {
             const container = document.getElementById('vip-modal-content');
             if (!container) return;
@@ -742,14 +795,16 @@
             renderWeeklyBar();
         }
 
+        // 항목 완료/삭제 시 LocalStorage에 반영
         function removeVipItem(cat, id) {
             if (vipState[cat]) {
                 vipState[cat] = vipState[cat].filter(i => i.id !== id);
+                localStorage.setItem(STORAGE_KEYS.VIP_STATE, JSON.stringify(vipState));
                 renderVipCenter();
             }
         }
 
-        // 당월 실적 수정 모달 관련
+        // 당월 실적 모달 및 저장 (LocalStorage 연동)
         function openPerformanceModal() {
             const m = document.getElementById('performance-modal');
             if (m) m.classList.remove('hidden');
@@ -766,6 +821,10 @@
             const subCnt = Number(document.getElementById('input-sub-cnt')?.value || 0);
             const careCnt = Number(document.getElementById('input-care-cnt')?.value || 0);
 
+            // LocalStorage에 실적 저장
+            const perfData = { totalSales, netSales, subCnt, careCnt };
+            localStorage.setItem(STORAGE_KEYS.PERF, JSON.stringify(perfData));
+
             const dispTotal = document.getElementById('display-total-sales');
             const dispNet = document.getElementById('display-net-sales');
             const dispSub = document.getElementById('display-sub-cnt');
@@ -777,7 +836,7 @@
             if (dispCare) dispCare.textContent = careCnt;
         }
 
-        // 맞춤 견적 계산기 관련
+        // 맞춤 견적 계산기 로직
         let currentTerm = 60;
         let cardTierAmount = 18000;
         let freedAllowMonthly = 15000;
@@ -818,7 +877,7 @@
             if (finalPriceDisplay) finalPriceDisplay.textContent = finalPrice.toLocaleString();
         }
 
-        // 내장형 Hi-Plan 계산기 로직
+        // Hi-Plan 계산기 로직
         function calculateHiPlan() {
             const basePrice = Number(document.getElementById('hiplan-base-price')?.value || 50000);
             const term = Number(document.getElementById('hiplan-term')?.value || 60);
@@ -835,10 +894,10 @@
             if (finalEl) finalEl.textContent = finalMonthly.toLocaleString();
         }
 
-        // DOM 로드 완료 후 실행
+        // 페이지 시작 시 저장 데이터 불러오기
         document.addEventListener('DOMContentLoaded', () => {
+            initAppStorage();
             renderWeeklyBar();
-            savePerformanceData();
             calculateQuote();
             calculateHiPlan();
         });
