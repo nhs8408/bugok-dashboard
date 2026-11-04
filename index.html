@@ -19,10 +19,23 @@
             <span class="text-xl">🏪</span>
             <h1 class="text-white font-extrabold text-base tracking-tight">매장 관리 & Smart 견적</h1>
         </div>
-        <button onclick="switchTab('main')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm flex items-center space-x-1">
-            <span>🏠 홈으로</span>
-        </button>
+        <div class="flex items-center space-x-1.5">
+            <!-- 📷 전표 스캔 버튼 -->
+            <button onclick="triggerReceiptScan()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-black px-2.5 py-1.5 rounded-xl transition shadow-sm flex items-center space-x-1">
+                <span>📷</span><span>전표 스캔</span>
+            </button>
+            <!-- ⚙️ API 설정 버튼 -->
+            <button onclick="openSettingsModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold px-2.5 py-1.5 rounded-xl transition">
+                ⚙️
+            </button>
+            <button onclick="switchTab('main')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm">
+                🏠 홈
+            </button>
+        </div>
     </header>
+
+    <!-- 숨김 카메라/파일 인풋 -->
+    <input type="file" id="receipt-file-input" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptFile(event)">
 
     <!-- 메인 컨테이너 -->
     <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-4">
@@ -40,7 +53,7 @@
                             <span>✨</span><span>TODAY BRIEFING</span>
                         </span>
                     </div>
-                    <span class="text-[11px] text-emerald-400 font-medium">● 로컬 자동 저장됨</span>
+                    <span class="text-[11px] text-emerald-400 font-medium">● 자동 동기화됨</span>
                 </div>
 
                 <!-- 타이틀 및 내일 휴무 여부 -->
@@ -48,7 +61,7 @@
                     <h2 class="text-lg font-black tracking-tight text-white flex items-center space-x-1.5">
                         <span id="main-today-off-title">내일은 정상 근무일입니다 💪</span>
                     </h2>
-                    <p class="text-xs text-slate-400 mt-0.5">주요 일정 및 고객 관리 도구를 한눈에 확인하세요.</p>
+                    <p class="text-xs text-slate-400 mt-0.5">상단 [📷 전표 스캔]으로 전표를 찍으면 배송일이 자동 등록됩니다.</p>
                 </div>
 
                 <!-- 브리핑 카운트 버튼 그리드 -->
@@ -59,7 +72,7 @@
                     </button>
                     <button onclick="openVipCenterWithTab('logistics')" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-2.5 text-center transition group">
                         <div class="text-[10px] text-slate-400 group-hover:text-indigo-300">배송일정</div>
-                        <div id="briefing-logistics-cnt" class="text-sm font-black text-white mt-0.5">0건</div>
+                        <div id="briefing-logistics-cnt" class="text-sm font-black text-amber-300 mt-0.5">0건</div>
                     </button>
                     <button onclick="openVipCenterWithTab('gift')" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-2.5 text-center transition group">
                         <div class="text-[10px] text-slate-400 group-hover:text-indigo-300">사은품미지급</div>
@@ -114,7 +127,6 @@
 
             <!-- 주요 메뉴 카드 리스트 -->
             <div class="space-y-2.5">
-                <!-- 플랜 계산기 버튼 -->
                 <button onclick="switchTab('hiplan')" class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 p-4 rounded-2xl flex items-center justify-between shadow-sm transition group text-left">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg font-bold">🧮</div>
@@ -125,7 +137,6 @@
                     <span class="text-xs font-bold text-indigo-600">열기 →</span>
                 </button>
 
-                <!-- 맞춤 견적 생성기 -->
                 <button onclick="switchTab('subscription')" class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 p-4 rounded-2xl flex items-center justify-between shadow-sm transition group text-left">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg font-bold">📝</div>
@@ -138,7 +149,6 @@
                 </button>
             </div>
         </div>
-
 
         <!-- ================= [TAB 2] 맞춤 견적 생성기 ================= -->
         <div id="tab-subscription" class="hidden space-y-4">
@@ -183,7 +193,6 @@
                         </div>
                     </div>
 
-                    <!-- 결과 요약 박스 -->
                     <div class="bg-indigo-900 text-white p-4 rounded-2xl space-y-2 mt-4 shadow-lg">
                         <div class="flex justify-between text-slate-300 text-[11px]">
                             <span>총 정상 구독료 합계</span>
@@ -198,8 +207,7 @@
             </div>
         </div>
 
-
-        <!-- ================= [TAB 3] 휴무 일정 및 캘린더 연동 ================= -->
+        <!-- ================= [TAB 3] 휴무 일정 및 캘린더 ================= -->
         <div id="tab-offdays" class="hidden space-y-4">
             <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-4">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-100">
@@ -207,32 +215,24 @@
                     <button onclick="switchTab('main')" class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-xl">뒤로</button>
                 </div>
 
-                <p class="text-xs text-slate-500">날짜를 터치하여 매장 지정 휴무일을 설정하거나 해제하세요. (설정 즉시 저장됩니다)</p>
+                <p class="text-xs text-slate-500">날짜를 터치하여 매장 지정 휴무일을 설정하거나 해제하세요.</p>
+                <div id="calendar-month-grid" class="grid grid-cols-7 gap-1 text-center"></div>
 
-                <!-- 월간 달력 그리드 -->
-                <div id="calendar-month-grid" class="grid grid-cols-7 gap-1 text-center">
-                    <!-- JS 렌더링 -->
-                </div>
-
-                <!-- 캘린더 연동 안내 및 다운로드 버튼 -->
                 <div class="pt-3 border-t border-slate-100 space-y-2">
-                    <h3 class="font-bold text-xs text-slate-800">🌐 구글 / 스마트폰 캘린더 완벽 연동 (.ics)</h3>
-                    <p class="text-[11px] text-slate-500">지정한 휴무일을 캘린더 앱에 등록할 수 있는 표준 파일을 다운로드합니다.</p>
-                    
+                    <h3 class="font-bold text-xs text-slate-800">🌐 구글 / 스마트폰 캘린더 연동 (.ics)</h3>
                     <div class="flex space-x-2 pt-1">
                         <button onclick="downloadIcsFile()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-xs shadow-sm transition text-center">
                             📥 1. 휴무 파일 저장 (.ics)
                         </button>
                         <a href="https://calendar.google.com/calendar/r/settings/export" target="_blank" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-xs shadow-sm transition text-center flex items-center justify-center space-x-1">
-                            <span>🌐 2. 구글 캘린더 웹 열기</span><span>↗</span>
+                            <span>🌐 2. 캘린더 웹 열기</span><span>↗</span>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-
-        <!-- ================= [TAB 4] 플랜 계산기 내장형 탭 ================= -->
+        <!-- ================= [TAB 4] 플랜 계산기 ================= -->
         <div id="tab-hiplan" class="hidden space-y-4">
             <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-4">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-100">
@@ -292,10 +292,84 @@
     </main>
 
 
-    <!-- ================= [MODAL] VIP 통합 관리 센터 ================= -->
+    <!-- ================= [MODAL] 전표 스캔 결과 확인 및 등록 ================= -->
+    <div id="scan-result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div class="flex items-center space-x-1.5">
+                    <span class="text-base">🤖</span>
+                    <h3 class="font-bold text-sm text-slate-800">전표 분석 완료 (배송 등록)</h3>
+                </div>
+                <button onclick="closeScanResultModal()" class="text-slate-400 font-bold">✕</button>
+            </div>
+
+            <p class="text-xs text-slate-500">AI가 추출한 내용입니다. 필요 시 수정 후 등록을 눌러주세요.</p>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">고객명</label>
+                    <input type="text" id="scan-input-name" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">배송(설치) 예정일자</label>
+                    <input type="date" id="scan-input-date" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">구매/배송 품목</label>
+                    <input type="text" id="scan-input-item" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
+                </div>
+            </div>
+
+            <div class="flex space-x-2 pt-2">
+                <button onclick="closeScanResultModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition">취소</button>
+                <button onclick="confirmScanDelivery()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-xl font-bold text-xs shadow-md transition">일정에 자동 등록 ✨</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= [MODAL] AI 로딩 모달 ================= -->
+    <div id="loading-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center space-y-3 shadow-2xl">
+            <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <h4 class="font-black text-sm text-slate-800">전표 이미지 분석 중...</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">AI가 매출전표에서 고객명과 배송일정을 읽어내고 있습니다. 잠시만 기다려주세요.</p>
+        </div>
+    </div>
+
+
+    <!-- ================= [MODAL] API 키 설정 ================= -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h3 class="font-bold text-sm text-slate-800">⚙️ AI 전표 스캔 설정 (무료)</h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 font-bold">✕</button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <p class="text-slate-600 leading-relaxed">
+                    구글에서 제공하는 <b>무료 Gemini API Key</b>를 1회 입력하시면 스마트폰에 안전하게 보관되어 무제한 자동 인식이 활성화됩니다.
+                </p>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Google Gemini API Key</label>
+                    <input type="password" id="input-gemini-key" placeholder="AIzaSy..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                    <p class="text-[11px] text-slate-500">
+                        🔑 키가 없으신가요? 
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-600 font-bold underline">Google AI Studio [무료 발급]</a>에서 1분 만에 무료로 받으실 수 있습니다.
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="saveApiKey()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold text-xs shadow-md transition">저장하기</button>
+        </div>
+    </div>
+
+
+    <!-- ================= [MODAL] VIP 고객 관리 모달 ================= -->
     <div id="vip-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
-            
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center space-x-2">
                     <span class="text-base">👑</span>
@@ -311,18 +385,14 @@
                 <button onclick="switchVipTab('unpurchased')" id="vip-tab-unpurchased" class="flex-1 py-1.5 rounded-xl">미구매상담</button>
             </div>
 
-            <div id="vip-modal-content" class="flex-1 overflow-y-auto space-y-2.5 pr-1">
-                <!-- JS 렌더링 -->
-            </div>
+            <div id="vip-modal-content" class="flex-1 overflow-y-auto space-y-2.5 pr-1"></div>
 
-            <button onclick="closeVipCenter()" class="w-full py-2.5 bg-slate-800 text-white rounded-2xl font-bold text-xs shadow-sm hover:bg-slate-900 transition">
-                확인 및 닫기
-            </button>
+            <button onclick="closeVipCenter()" class="w-full py-2.5 bg-slate-800 text-white rounded-2xl font-bold text-xs shadow-sm hover:bg-slate-900 transition">확인 및 닫기</button>
         </div>
     </div>
 
 
-    <!-- ================= [MODAL] 당월 실적 수정 모달 ================= -->
+    <!-- ================= [MODAL] 실적 수정 모달 ================= -->
     <div id="performance-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-2 border-b border-slate-100">
@@ -354,39 +424,33 @@
     </div>
 
 
-    <!-- ================= [MODAL] 날짜별 배송 상세 확인 모달 ================= -->
+    <!-- ================= [MODAL] 날짜별 배송 상세 모달 ================= -->
     <div id="date-detail-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                 <h3 id="date-modal-title" class="font-bold text-sm text-slate-800">📅 배송 일정 상세</h3>
                 <button onclick="closeDateDetailModal()" class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold text-xs flex items-center justify-center">✕</button>
             </div>
-            
-            <div id="date-modal-content" class="space-y-2 max-h-60 overflow-y-auto">
-                <!-- JS 렌더링 -->
-            </div>
-
+            <div id="date-modal-content" class="space-y-2 max-h-60 overflow-y-auto"></div>
             <button onclick="closeDateDetailModal()" class="w-full py-2.5 bg-slate-800 text-white rounded-2xl font-bold text-xs shadow-sm">확인</button>
         </div>
     </div>
 
-
     <!-- 푸터 -->
     <footer class="text-center py-4 text-[11px] text-slate-500">
-        Store Dashboard & Smart Quote Engine v3.5
+        Store Dashboard & Smart Quote Engine v3.6 (AI Vision Powered)
     </footer>
 
 
-    <!-- ================= 자바스크립트 로직 (LocalStorage 저장 포함) ================= -->
+    <!-- ================= 자바스크립트 로직 ================= -->
     <script>
-        // LocalStorage 키 관리
         const STORAGE_KEYS = {
             OFF_DAYS: 'store_dashboard_off_days',
             VIP_STATE: 'store_dashboard_vip_state',
-            PERF: 'store_dashboard_performance'
+            PERF: 'store_dashboard_performance',
+            GEMINI_KEY: 'store_dashboard_gemini_key'
         };
 
-        // 기본 초기 데이터
         const defaultOffDays = [
             '2026-11-02', '2026-11-03', '2026-11-09', '2026-11-10',
             '2026-11-14', '2026-11-16', '2026-11-17', '2026-11-22',
@@ -418,82 +482,221 @@
             careCnt: 24
         };
 
-        // 앱 상태 변수
         let setOffDays = new Set();
         let vipState = {};
         let currentVipTab = 'todo';
 
-        // 1. 데이터 로드 함수 (저장된 게 있으면 로드, 없으면 기본값)
+        // 앱 초기화 및 LocalStorage 로드
         function initAppStorage() {
-            // 휴무일 로드
             const savedOffDays = localStorage.getItem(STORAGE_KEYS.OFF_DAYS);
-            if (savedOffDays) {
-                try {
-                    setOffDays = new Set(JSON.parse(savedOffDays));
-                } catch(e) {
-                    setOffDays = new Set(defaultOffDays);
-                }
-            } else {
-                setOffDays = new Set(defaultOffDays);
-            }
+            setOffDays = savedOffDays ? new Set(JSON.parse(savedOffDays)) : new Set(defaultOffDays);
 
-            // VIP 데이터 로드
             const savedVip = localStorage.getItem(STORAGE_KEYS.VIP_STATE);
-            if (savedVip) {
-                try {
-                    vipState = JSON.parse(savedVip);
-                } catch(e) {
-                    vipState = JSON.parse(JSON.stringify(defaultVipState));
-                }
-            } else {
-                vipState = JSON.parse(JSON.stringify(defaultVipState));
-            }
+            vipState = savedVip ? JSON.parse(savedVip) : JSON.parse(JSON.stringify(defaultVipState));
 
-            // 실적 데이터 로드
             const savedPerf = localStorage.getItem(STORAGE_KEYS.PERF);
-            let perf = defaultPerformance;
-            if (savedPerf) {
-                try {
-                    perf = JSON.parse(savedPerf);
-                } catch(e) {
-                    perf = defaultPerformance;
-                }
-            }
+            const perf = savedPerf ? JSON.parse(savedPerf) : defaultPerformance;
 
-            // 인풋 필드 채우기
             document.getElementById('input-total-sales').value = perf.totalSales;
             document.getElementById('input-net-sales').value = perf.netSales;
             document.getElementById('input-sub-cnt').value = perf.subCnt;
             document.getElementById('input-care-cnt').value = perf.careCnt;
 
-            // 디스플레이 갱신
             document.getElementById('display-total-sales').textContent = Number(perf.totalSales).toLocaleString();
             document.getElementById('display-net-sales').textContent = Number(perf.netSales).toLocaleString();
             document.getElementById('display-sub-cnt').textContent = perf.subCnt;
             document.getElementById('display-care-cnt').textContent = perf.careCnt;
         }
 
-        // 탭 전환
-        function switchTab(tableName) {
-            const tabs = ['main', 'subscription', 'offdays', 'hiplan'];
-            tabs.forEach(t => {
-                const el = document.getElementById(`tab-${t}`);
-                if (el) {
-                    if (t === tableName) {
-                        el.classList.remove('hidden');
-                    } else {
-                        el.classList.add('hidden');
-                    }
+        // ================= [AI 전표 스캔 엔진] =================
+        function triggerReceiptScan() {
+            const key = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
+            if (!key) {
+                alert('전표 자동 인식을 위해 무료 Gemini API Key를 먼저 등록해주세요.');
+                openSettingsModal();
+                return;
+            }
+            document.getElementById('receipt-file-input').click();
+        }
+
+        function openSettingsModal() {
+            const key = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '';
+            document.getElementById('input-gemini-key').value = key;
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('input-gemini-key').value.trim();
+            if (!key) {
+                alert('API 키를 입력해주세요.');
+                return;
+            }
+            localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, key);
+            closeSettingsModal();
+            alert('API 키가 안전하게 저장되었습니다! 이제 전표 스캔을 사용하실 수 있습니다.');
+        }
+
+        // 이미지 파일 처리 및 압축 후 Gemini 호출
+        async function handleReceiptFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // 로딩 모달 켜기
+            document.getElementById('loading-modal').classList.remove('hidden');
+
+            try {
+                // 모바일 사진 고속 압축 (최대 너비 1200px)
+                const base64Data = await resizeImageToBase64(file, 1200, 0.8);
+                const apiKey = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
+
+                // Gemini API 호출
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [
+                                {
+                                    text: "당신은 매장의 영수증/매출전표/주문서 분석 전문가입니다. 첨부된 이미지에서 [고객명], [배송 또는 설치 예정일], [주요 구매 품목명]을 추출하여 정확한 JSON으로만 답하세요.\n양식:\n{\n  \"name\": \"고객이름 (없으면 '고객님')\",\n  \"item\": \"주요 품목명\",\n  \"dateStr\": \"YYYY-MM-DD 형식 (배송일이 특정되지 않으면 오늘날짜인 2026-11-04)\"\n}\n마크다운 백틱 없이 순수 JSON만 출력하세요."
+                                },
+                                {
+                                    inlineData: {
+                                        mimeType: "image/jpeg",
+                                        data: base64Data
+                                    }
+                                }
+                            ]
+                        }]
+                    })
+                });
+
+                const resJson = await response.json();
+                document.getElementById('loading-modal').classList.add('hidden');
+
+                if (resJson.error) {
+                    throw new Error(resJson.error.message);
                 }
-            });
-            if (tableName === 'offdays') {
-                renderMonthCalendar();
-            } else if (tableName === 'hiplan') {
-                calculateHiPlan();
+
+                const rawText = resJson.candidates[0].content.parts[0].text.trim();
+                const cleanedJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+                const parsed = JSON.parse(cleanedJson);
+
+                // 결과 모달에 띄우기
+                document.getElementById('scan-input-name').value = parsed.name || '고객님';
+                document.getElementById('scan-input-date').value = parsed.dateStr || '2026-11-04';
+                document.getElementById('scan-input-item').value = parsed.item || '가전 제품';
+
+                document.getElementById('scan-result-modal').classList.remove('hidden');
+
+            } catch (err) {
+                document.getElementById('loading-modal').classList.add('hidden');
+                console.error(err);
+                alert(`전표 분석 중 오류가 발생했습니다: ${err.message}\nAPI 키 또는 전표 사진 상태를 확인해주세요.`);
+            } finally {
+                event.target.value = ''; // 재촬영 가능하도록 리셋
             }
         }
 
-        // 주간 브리핑 바 렌더링
+        // 브라우저 캔버스를 이용한 모바일 사진 초고속 리사이징
+        function resizeImageToBase64(file, maxDimension, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height && width > maxDimension) {
+                            height = Math.round((height * maxDimension) / width);
+                            width = maxDimension;
+                        } else if (height > maxDimension) {
+                            width = Math.round((width * maxDimension) / height);
+                            height = maxDimension;
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(dataUrl.split(',')[1]); // base64 payload만 반환
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function closeScanResultModal() {
+            document.getElementById('scan-result-modal').classList.add('hidden');
+        }
+
+        // 스캔 결과 확정 등록
+        function confirmScanDelivery() {
+            const name = document.getElementById('scan-input-name').value.trim();
+            const dateStr = document.getElementById('scan-input-date').value;
+            const item = document.getElementById('scan-input-item').value.trim();
+
+            if (!name || !dateStr) {
+                alert('고객명과 배송일자를 확인해주세요.');
+                return;
+            }
+
+            // 기준일(2026-11-04)과 날짜 차이(offset) 계산
+            const baseDate = new Date('2026-11-04');
+            const targetDate = new Date(dateStr);
+            const diffDays = Math.round((targetDate - baseDate) / (1000 * 60 * 60 * 24));
+
+            let scheduleText = '배송 예정';
+            let type = 'upcoming';
+
+            if (diffDays === 0) {
+                scheduleText = '오늘 배송';
+                type = 'today';
+            } else if (diffDays === 1) {
+                scheduleText = '내일 배송';
+                type = 'tomorrow';
+            } else {
+                scheduleText = `${targetDate.getMonth() + 1}/${targetDate.getDate()} 배송`;
+                type = 'upcoming';
+            }
+
+            // VIP 상태에 배송 건 추가
+            if (!vipState.logistics) vipState.logistics = [];
+            vipState.logistics.push({
+                id: Date.now(),
+                name: name.endsWith('고객님') ? name : `${name} 고객님`,
+                item: item,
+                type: type,
+                schedule: scheduleText,
+                dateOffset: diffDays,
+                dateStr: dateStr
+            });
+
+            // LocalStorage 저장
+            localStorage.setItem(STORAGE_KEYS.VIP_STATE, JSON.stringify(vipState));
+
+            closeScanResultModal();
+            renderWeeklyBar();
+            alert(`🎉 ${name}님의 배송 일정(${dateStr})이 성공적으로 등록되었습니다!`);
+        }
+
+        // ================= [탭 및 렌더링 로직] =================
+        function switchTab(tableName) {
+            ['main', 'subscription', 'offdays', 'hiplan'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if (el) el.classList.toggle('hidden', t !== tableName);
+            });
+            if (tableName === 'offdays') renderMonthCalendar();
+            if (tableName === 'hiplan') calculateHiPlan();
+        }
+
         function renderWeeklyBar() {
             const bar = document.getElementById('weekly-bar');
             if (!bar) return;
@@ -507,10 +710,8 @@
             const isTomorrowOff = setOffDays.has(tomorrowStr);
 
             const titleEl = document.getElementById('main-today-off-title');
-            if (isTomorrowOff) {
-                if (titleEl) titleEl.textContent = '내일 드디어 휴무입니다! 🥳';
-            } else {
-                if (titleEl) titleEl.textContent = '내일은 정상 근무일입니다 💪';
+            if (titleEl) {
+                titleEl.textContent = isTomorrowOff ? '내일 드디어 휴무입니다! 🥳' : '내일은 정상 근무일입니다 💪';
             }
 
             for (let i = -1; i <= 5; i++) {
@@ -525,14 +726,14 @@
                 let bgClass = isOff ? 'bg-indigo-500/40 text-indigo-100 border-indigo-400/40' : 'bg-white/5 text-slate-300 border-transparent';
                 if (isToday) bgClass += ' ring-2 ring-white font-extrabold';
 
-                const matchedLogistics = (vipState.logistics || []).filter(l => l.dateOffset === i || l.dateStr === dateStr);
-                let customerNamesHtml = '';
-                if (matchedLogistics.length > 0) {
-                    customerNamesHtml = matchedLogistics.map(l => `<div class="text-[9px] font-bold text-amber-300 truncate mt-0.5">${l.name.replace(' 고객님', '')}</div>`).join('');
+                const matched = (vipState.logistics || []).filter(l => l.dateOffset === i || l.dateStr === dateStr);
+                let customerHtml = '';
+                if (matched.length > 0) {
+                    customerHtml = matched.map(l => `<div class="text-[9px] font-bold text-amber-300 truncate mt-0.5">${l.name.replace(' 고객님', '')}</div>`).join('');
                 }
 
                 html += `
-                    <div onclick="openDateDetail('${dateStr}', '${monthDayLabel(d)} (${dayOfWeekName})', ${i})" class="cursor-pointer hover:bg-white/10 text-center p-1.5 rounded-xl border ${bgClass} flex flex-col justify-between transition" style="min-height: 95px;">
+                    <div onclick="openDateDetail('${dateStr}', '${d.getMonth()+1}월 ${dayNum}일 (${dayOfWeekName})', ${i})" class="cursor-pointer hover:bg-white/10 text-center p-1.5 rounded-xl border ${bgClass} flex flex-col justify-between transition" style="min-height: 95px;">
                         <div>
                             <div class="text-[9px] opacity-80">${dayOfWeekName}</div>
                             <div class="text-xs font-bold my-0.5">${dayNum}</div>
@@ -540,36 +741,23 @@
                         </div>
                         <div class="pt-1 border-t border-white/10 mt-1">
                             <div class="text-[8px] text-indigo-200">배송</div>
-                            ${customerNamesHtml || '<div class="text-[8px] text-slate-500">-</div>'}
+                            ${customerHtml || '<div class="text-[8px] text-slate-500">-</div>'}
                         </div>
                     </div>
                 `;
             }
             bar.innerHTML = html;
 
-            // 브리핑 카운트 갱신
-            const todoCnt = document.getElementById('briefing-todo-cnt');
-            const logisticsCnt = document.getElementById('briefing-logistics-cnt');
-            const giftCnt = document.getElementById('briefing-gift-cnt');
-            const unpCnt = document.getElementById('briefing-unp-cnt');
-
-            if (todoCnt) todoCnt.textContent = `${vipState.todo?.length || 0}건`;
-            if (logisticsCnt) logisticsCnt.textContent = `${vipState.logistics?.length || 0}건`;
-            if (giftCnt) giftCnt.textContent = `${vipState.gift?.length || 0}건`;
-            if (unpCnt) unpCnt.textContent = `${vipState.unpurchased?.length || 0}건`;
+            document.getElementById('briefing-todo-cnt').textContent = `${vipState.todo?.length || 0}건`;
+            document.getElementById('briefing-logistics-cnt').textContent = `${vipState.logistics?.length || 0}건`;
+            document.getElementById('briefing-gift-cnt').textContent = `${vipState.gift?.length || 0}건`;
+            document.getElementById('briefing-unp-cnt').textContent = `${vipState.unpurchased?.length || 0}건`;
         }
 
-        function monthDayLabel(d) {
-            return `${d.getMonth() + 1}월 ${d.getDate()}일`;
-        }
-
-        // 날짜별 배송 상세 모달 열기
         function openDateDetail(dateStr, dateTitle, offset) {
             const modal = document.getElementById('date-detail-modal');
             const titleEl = document.getElementById('date-modal-title');
             const contentEl = document.getElementById('date-modal-content');
-            if (!modal || !titleEl || !contentEl) return;
-
             titleEl.textContent = `📅 ${dateTitle} 배송 및 휴무 일정`;
 
             const matched = (vipState.logistics || []).filter(l => l.dateOffset === offset || l.dateStr === dateStr);
@@ -597,17 +785,14 @@
                     `;
                 });
             }
-
             contentEl.innerHTML = html;
             modal.classList.remove('hidden');
         }
 
         function closeDateDetailModal() {
-            const modal = document.getElementById('date-detail-modal');
-            if (modal) modal.classList.add('hidden');
+            document.getElementById('date-detail-modal').classList.add('hidden');
         }
 
-        // 월간 달력 렌더링 및 휴무일 저장
         function renderMonthCalendar() {
             const grid = document.getElementById('calendar-month-grid');
             if (!grid) return;
@@ -617,31 +802,17 @@
                 grid.innerHTML += `<div class="font-bold text-slate-400 py-1 text-[11px]">${day}</div>`;
             });
 
-            const daysInMonth = 30;
-            const startDay = 0;
-
-            for (let i = 0; i < startDay; i++) {
-                grid.innerHTML += `<div></div>`;
-            }
-
-            for (let day = 1; day <= daysInMonth; day++) {
+            for (let day = 1; day <= 30; day++) {
                 const dayStr = `2026-11-${String(day).padStart(2, '0')}`;
                 const isOff = setOffDays.has(dayStr);
-                
                 const btn = document.createElement('button');
                 btn.className = `h-9 rounded-xl font-bold text-xs flex flex-col items-center justify-center transition border ${
-                    isOff 
-                    ? 'bg-rose-500 text-white border-rose-600 shadow-sm' 
-                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                    isOff ? 'bg-rose-500 text-white border-rose-600 shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                 }`;
                 btn.innerHTML = `<span>${day}</span><span class="text-[8px] opacity-80">${isOff ? '휴무' : '근무'}</span>`;
                 btn.onclick = () => {
-                    if (setOffDays.has(dayStr)) {
-                        setOffDays.delete(dayStr);
-                    } else {
-                        setOffDays.add(dayStr);
-                    }
-                    // 휴무일 변경 시 즉시 LocalStorage에 영구 저장
+                    if (setOffDays.has(dayStr)) setOffDays.delete(dayStr);
+                    else setOffDays.add(dayStr);
                     localStorage.setItem(STORAGE_KEYS.OFF_DAYS, JSON.stringify(Array.from(setOffDays)));
                     renderMonthCalendar();
                     renderWeeklyBar();
@@ -650,18 +821,11 @@
             }
         }
 
-        // ICS 파일 다운로드
         function downloadIcsFile() {
             let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Store Dashboard//OffDays//KO\n";
             setOffDays.forEach(dateStr => {
                 const cleanDate = dateStr.replace(/-/g, '');
-                icsContent += "BEGIN:VEVENT\n";
-                icsContent += `UID:offday-${cleanDate}@store.com\n`;
-                icsContent += `DTSTAMP:${cleanDate}T000000Z\n`;
-                icsContent += `DTSTART;VALUE=DATE:${cleanDate}\n`;
-                icsContent += `DTEND;VALUE=DATE:${cleanDate}\n`;
-                icsContent += `SUMMARY:🏠 매장 지정 휴무일\n`;
-                icsContent += "END:VEVENT\n";
+                icsContent += `BEGIN:VEVENT\nUID:offday-${cleanDate}@store.com\nDTSTAMP:${cleanDate}T000000Z\nDTSTART;VALUE=DATE:${cleanDate}\nDTEND;VALUE=DATE:${cleanDate}\nSUMMARY:🏠 매장 지정 휴무일\nEND:VEVENT\n`;
             });
             icsContent += "END:VCALENDAR";
 
@@ -674,19 +838,13 @@
             document.body.removeChild(link);
         }
 
-        // VIP 통합 센터 렌더링
+        // VIP 센터
         function openVipCenterWithTab(tabName) {
             currentVipTab = tabName;
-            const modal = document.getElementById('vip-modal');
-            if (modal) modal.classList.remove('hidden');
-            
+            document.getElementById('vip-modal').classList.remove('hidden');
             ['todo', 'logistics', 'gift', 'unpurchased'].forEach(t => {
                 const btn = document.getElementById(`vip-tab-${t}`);
-                if (btn) {
-                    btn.className = (t === tabName) 
-                        ? 'flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 font-bold'
-                        : 'flex-1 py-1.5 rounded-xl text-slate-600';
-                }
+                if (btn) btn.className = (t === tabName) ? 'flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 font-bold' : 'flex-1 py-1.5 rounded-xl text-slate-600';
             });
             renderVipCenter();
         }
@@ -695,18 +853,13 @@
             currentVipTab = tabName;
             ['todo', 'logistics', 'gift', 'unpurchased'].forEach(t => {
                 const btn = document.getElementById(`vip-tab-${t}`);
-                if (btn) {
-                    btn.className = (t === tabName)
-                        ? 'flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 font-bold'
-                        : 'flex-1 py-1.5 rounded-xl text-slate-600';
-                }
+                if (btn) btn.className = (t === tabName) ? 'flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 font-bold' : 'flex-1 py-1.5 rounded-xl text-slate-600';
             });
             renderVipCenter();
         }
 
         function closeVipCenter() {
-            const modal = document.getElementById('vip-modal');
-            if (modal) modal.classList.add('hidden');
+            document.getElementById('vip-modal').classList.add('hidden');
             renderWeeklyBar();
         }
 
@@ -714,13 +867,11 @@
             const container = document.getElementById('vip-modal-content');
             if (!container) return;
             container.innerHTML = '';
-
             const list = vipState[currentVipTab] || [];
 
             if (currentVipTab === 'logistics') {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'space-y-3';
-
                 const categories = [
                     { key: 'today', title: '🔴 오늘 배송 일정', items: list.filter(i => i.type === 'today' || i.dateOffset === 0) },
                     { key: 'tomorrow', title: '🟡 내일 배송 일정', items: list.filter(i => i.type === 'tomorrow' || i.dateOffset === 1) },
@@ -730,9 +881,7 @@
                 categories.forEach(cat => {
                     const section = document.createElement('div');
                     section.className = 'bg-slate-50 rounded-2xl p-3 border border-slate-200/80 space-y-2';
-                    
                     let html = `<div class="font-bold text-xs text-slate-700 pb-1 border-b border-slate-200">${cat.title} (${cat.items.length})</div>`;
-                    
                     if (cat.items.length === 0) {
                         html += `<div class="text-[11px] text-slate-400 py-1">예정된 배송 건이 없습니다.</div>`;
                     } else {
@@ -741,7 +890,7 @@
                                 <div class="bg-white p-2.5 rounded-xl border border-slate-100 flex items-center justify-between text-xs shadow-sm">
                                     <div>
                                         <span class="font-bold text-slate-800">${item.name}</span>
-                                        <p class="text-slate-500 text-[11px]">${item.item}</p>
+                                        <p class="text-slate-500 text-[11px]">${item.item} (${item.dateStr || ''})</p>
                                     </div>
                                     <button onclick="removeVipItem('logistics', ${item.id})" class="text-[11px] bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-2 py-1 rounded-lg transition">완료</button>
                                 </div>
@@ -761,41 +910,19 @@
                 list.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'p-3 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-between text-xs';
-
                     if (currentVipTab === 'todo') {
-                        card.innerHTML = `
-                            <div>
-                                <span class="bg-rose-100 text-rose-600 font-bold px-1.5 py-0.5 rounded text-[10px]">${item.tag}</span>
-                                <span class="font-bold text-slate-800 ml-1">${item.name}</span>
-                                <p class="text-slate-500 mt-1">${item.content}</p>
-                            </div>
-                            <button onclick="removeVipItem('todo', ${item.id})" class="text-xs bg-emerald-600 text-white font-bold px-2.5 py-1 rounded-xl shadow-sm">완료/삭제</button>
-                        `;
+                        card.innerHTML = `<div><span class="bg-rose-100 text-rose-600 font-bold px-1.5 py-0.5 rounded text-[10px]">${item.tag}</span><span class="font-bold text-slate-800 ml-1">${item.name}</span><p class="text-slate-500 mt-1">${item.content}</p></div><button onclick="removeVipItem('todo', ${item.id})" class="text-xs bg-emerald-600 text-white font-bold px-2.5 py-1 rounded-xl shadow-sm">완료/삭제</button>`;
                     } else if (currentVipTab === 'gift') {
-                        card.innerHTML = `
-                            <div>
-                                <span class="font-bold text-slate-800">${item.name}</span>
-                                <p class="text-slate-500 mt-0.5">${item.item} [${item.status}]</p>
-                            </div>
-                            <button onclick="removeVipItem('gift', ${item.id})" class="text-xs bg-amber-500 text-white font-bold px-2.5 py-1 rounded-xl shadow-sm">수령확인(삭제)</button>
-                        `;
+                        card.innerHTML = `<div><span class="font-bold text-slate-800">${item.name}</span><p class="text-slate-500 mt-0.5">${item.item} [${item.status}]</p></div><button onclick="removeVipItem('gift', ${item.id})" class="text-xs bg-amber-500 text-white font-bold px-2.5 py-1 rounded-xl shadow-sm">수령확인</button>`;
                     } else if (currentVipTab === 'unpurchased') {
-                        card.innerHTML = `
-                            <div>
-                                <span class="font-bold text-slate-800">${item.name}</span> (${item.phone})
-                                <p class="text-slate-500 mt-0.5">${item.interest}</p>
-                            </div>
-                            <button onclick="removeVipItem('unpurchased', ${item.id})" class="text-xs bg-indigo-600 text-white font-bold px-2.5 py-1 rounded-xl shadow-sm">상담완료(삭제)</button>
-                        `;
+                        card.innerHTML = `<div><span class="font-bold text-slate-800">${item.name}</span> (${item.phone})<p class="text-slate-500 mt-0.5">${item.interest}</p></div><button onclick="removeVipItem('unpurchased', ${item.id})" class="text-xs bg-indigo-600 text-white font-bold px-2.5 py-1 rounded-xl shadow-sm">상담완료</button>`;
                     }
                     container.appendChild(card);
                 });
             }
-
             renderWeeklyBar();
         }
 
-        // 항목 완료/삭제 시 LocalStorage에 반영
         function removeVipItem(cat, id) {
             if (vipState[cat]) {
                 vipState[cat] = vipState[cat].filter(i => i.id !== id);
@@ -804,39 +931,24 @@
             }
         }
 
-        // 당월 실적 모달 및 저장 (LocalStorage 연동)
-        function openPerformanceModal() {
-            const m = document.getElementById('performance-modal');
-            if (m) m.classList.remove('hidden');
-        }
-
-        function closePerformanceModal() {
-            const m = document.getElementById('performance-modal');
-            if (m) m.classList.add('hidden');
-        }
-
+        // 실적 모달
+        function openPerformanceModal() { document.getElementById('performance-modal').classList.remove('hidden'); }
+        function closePerformanceModal() { document.getElementById('performance-modal').classList.add('hidden'); }
         function savePerformanceData() {
             const totalSales = Number(document.getElementById('input-total-sales')?.value || 0);
             const netSales = Number(document.getElementById('input-net-sales')?.value || 0);
             const subCnt = Number(document.getElementById('input-sub-cnt')?.value || 0);
             const careCnt = Number(document.getElementById('input-care-cnt')?.value || 0);
 
-            // LocalStorage에 실적 저장
-            const perfData = { totalSales, netSales, subCnt, careCnt };
-            localStorage.setItem(STORAGE_KEYS.PERF, JSON.stringify(perfData));
+            localStorage.setItem(STORAGE_KEYS.PERF, JSON.stringify({ totalSales, netSales, subCnt, careCnt }));
 
-            const dispTotal = document.getElementById('display-total-sales');
-            const dispNet = document.getElementById('display-net-sales');
-            const dispSub = document.getElementById('display-sub-cnt');
-            const dispCare = document.getElementById('display-care-cnt');
-
-            if (dispTotal) dispTotal.textContent = totalSales.toLocaleString();
-            if (dispNet) dispNet.textContent = netSales.toLocaleString();
-            if (dispSub) dispSub.textContent = subCnt;
-            if (dispCare) dispCare.textContent = careCnt;
+            document.getElementById('display-total-sales').textContent = totalSales.toLocaleString();
+            document.getElementById('display-net-sales').textContent = netSales.toLocaleString();
+            document.getElementById('display-sub-cnt').textContent = subCnt;
+            document.getElementById('display-care-cnt').textContent = careCnt;
         }
 
-        // 맞춤 견적 계산기 로직
+        // 견적기 & 플랜 계산기
         let currentTerm = 60;
         let cardTierAmount = 18000;
         let freedAllowMonthly = 15000;
@@ -852,9 +964,7 @@
             cardTierAmount = amount;
             ['30', '70', '150'].forEach(t => {
                 const btn = document.getElementById(`tier-${t}`);
-                if (btn) {
-                    btn.className = t == tier ? 'p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 font-bold text-indigo-700 text-center' : 'p-2 rounded-xl border border-slate-200 bg-slate-50 font-semibold text-center text-slate-600';
-                }
+                if (btn) btn.className = t == tier ? 'p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 font-bold text-indigo-700 text-center' : 'p-2 rounded-xl border border-slate-200 bg-slate-50 font-semibold text-center text-slate-600';
             });
             calculateQuote();
         }
@@ -869,32 +979,19 @@
             const basePrice = Number(document.getElementById('input-base-price')?.value || 0);
             const totalRaw = basePrice * currentTerm;
             const finalPrice = Math.max(0, basePrice - cardTierAmount - freedAllowMonthly);
-
-            const labelTotalRaw = document.getElementById('label-total-raw');
-            const finalPriceDisplay = document.getElementById('final-price-display');
-
-            if (labelTotalRaw) labelTotalRaw.textContent = totalRaw.toLocaleString();
-            if (finalPriceDisplay) finalPriceDisplay.textContent = finalPrice.toLocaleString();
+            document.getElementById('label-total-raw').textContent = totalRaw.toLocaleString();
+            document.getElementById('final-price-display').textContent = finalPrice.toLocaleString();
         }
 
-        // Hi-Plan 계산기 로직
         function calculateHiPlan() {
             const basePrice = Number(document.getElementById('hiplan-base-price')?.value || 50000);
-            const term = Number(document.getElementById('hiplan-term')?.value || 60);
             const cardDisc = Number(document.getElementById('hiplan-card')?.value || 18000);
             const freedDisc = Number(document.getElementById('hiplan-freed')?.value || 15000);
-
             const totalSaving = cardDisc + freedDisc;
-            const finalMonthly = Math.max(0, basePrice - totalSaving);
-
-            const savingEl = document.getElementById('hiplan-saving-display');
-            const finalEl = document.getElementById('hiplan-final-display');
-
-            if (savingEl) savingEl.textContent = `-${totalSaving.toLocaleString()}원 할인`;
-            if (finalEl) finalEl.textContent = finalMonthly.toLocaleString();
+            document.getElementById('hiplan-saving-display').textContent = `-${totalSaving.toLocaleString()}원 할인`;
+            document.getElementById('hiplan-final-display').textContent = Math.max(0, basePrice - totalSaving).toLocaleString();
         }
 
-        // 페이지 시작 시 저장 데이터 불러오기
         document.addEventListener('DOMContentLoaded', () => {
             initAppStorage();
             renderWeeklyBar();
