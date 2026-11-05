@@ -6,6 +6,8 @@
     <title>매장 관리 및 맞춤 견적 대시보드</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS (엑셀 파일 파서 라이브러리) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -34,8 +36,9 @@
         </div>
     </header>
 
-    <!-- 숨김 카메라/파일 인풋 -->
+    <!-- 숨김 파일 인풋 (전표 사진 & 엑셀 수당표) -->
     <input type="file" id="receipt-file-input" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptFile(event)">
+    <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelUpload(event)">
 
     <!-- 메인 컨테이너 -->
     <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-4">
@@ -97,16 +100,31 @@
 
             </div>
 
-            <!-- ================= [수정됨] 11월 수당 현황 카드 ================= -->
+            <!-- ================= [11월 수당 현황 카드 + 엑셀 첨부] ================= -->
             <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-3">
                 <div class="flex items-center justify-between">
                     <h3 class="font-bold text-sm text-slate-800 flex items-center space-x-1.5">
                         <span>💰</span><span>11월 수당 현황</span>
                     </h3>
-                    <button onclick="openCommissionModal()" class="text-xs text-amber-700 font-bold bg-amber-50 hover:bg-amber-100 border border-amber-200/60 px-2.5 py-1 rounded-xl transition">수당 수정</button>
+                    <div class="flex items-center space-x-1.5">
+                        <!-- 📁 엑셀 파일 업로드 버튼 -->
+                        <button onclick="triggerExcelUpload()" class="text-xs text-emerald-700 font-bold bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-xl transition flex items-center space-x-1">
+                            <span>📁</span><span>엑셀 첨부</span>
+                        </button>
+                        <button onclick="openCommissionModal()" class="text-xs text-amber-700 font-bold bg-amber-50 hover:bg-amber-100 border border-amber-200/60 px-2.5 py-1 rounded-xl transition">수당 수정</button>
+                    </div>
                 </div>
 
-                <!-- 11월 총 수당 (전체 금액) 메인 디스플레이 -->
+                <!-- 엑셀 수당표 연동 상태 배너 -->
+                <div id="comm-table-status-banner" class="bg-slate-50 border border-slate-200/80 rounded-2xl p-2.5 flex items-center justify-between text-[11px]">
+                    <div class="flex items-center space-x-1.5 truncate">
+                        <span id="comm-table-status-icon">📊</span>
+                        <span id="comm-table-status-text" class="text-slate-500 truncate">수당표 엑셀을 첨부하면 모델별 수당이 자동 매칭됩니다.</span>
+                    </div>
+                    <button id="comm-table-delete-btn" onclick="deleteCommissionTable()" class="hidden text-rose-500 font-bold hover:underline shrink-0 ml-1">해제</button>
+                </div>
+
+                <!-- 11월 총 수당 (전체 금액) -->
                 <div class="bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent p-4 rounded-2xl border border-amber-200 flex items-center justify-between">
                     <div>
                         <span class="text-[11px] font-bold text-amber-900">11월 총 수당</span>
@@ -120,7 +138,10 @@
                 <!-- 하단: 모델 수당 & 프리드 가입 건수 -->
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                        <span class="text-slate-400 text-[11px]">모델 수당</span>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-[11px]">모델 수당</span>
+                            <span id="badge-auto-calc" class="hidden text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.2 rounded font-bold">자동계산</span>
+                        </div>
                         <div class="text-sm font-black text-indigo-600 mt-0.5"><span id="display-comm-model">0</span>원</div>
                     </div>
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
@@ -289,7 +310,7 @@
     </main>
 
 
-    <!-- ================= [MODAL] 수당 수정 모달 (단순화됨) ================= -->
+    <!-- ================= [MODAL] 수당 수정 모달 ================= -->
     <div id="commission-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-2 border-b border-slate-100">
@@ -300,7 +321,7 @@
                 <button onclick="closeCommissionModal()" class="text-slate-400 font-bold">✕</button>
             </div>
 
-            <p class="text-xs text-slate-500">당월 총 수당과 모델 수당, 프리드 가입 건수를 입력해주세요.</p>
+            <p class="text-xs text-slate-500">당월 총 수당과 모델 수당, 프리드 가입 건수를 직접 수정하거나 엑셀을 첨부할 수 있습니다.</p>
 
             <div class="space-y-3 text-xs">
                 <div>
@@ -326,7 +347,10 @@
                 </div>
             </div>
 
-            <button onclick="saveCommissionData(); closeCommissionModal();" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-2xl font-black text-xs shadow-md transition">수당 저장하기 ✨</button>
+            <div class="pt-1 flex space-x-2">
+                <button onclick="triggerExcelUpload(); closeCommissionModal();" class="flex-1 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-2xl font-bold text-xs transition">📁 엑셀로 가져오기</button>
+                <button onclick="saveCommissionData(); closeCommissionModal();" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-2xl font-black text-xs shadow-md transition">저장하기 ✨</button>
+            </div>
         </div>
     </div>
 
@@ -484,7 +508,7 @@
 
     <!-- 푸터 -->
     <footer class="text-center py-4 text-[11px] text-slate-500">
-        Store Dashboard & Smart Quote Engine v4.4 (Simplified Commission View)
+        Store Dashboard & Smart Quote Engine v4.5 (Excel Commission Parser Enabled)
     </footer>
 
 
@@ -495,6 +519,7 @@
             VIP_STATE: 'store_dashboard_vip_state',
             PERF: 'store_dashboard_performance',
             COMMISSION: 'store_dashboard_commission',
+            COMM_TABLE: 'store_dashboard_commission_table',
             GEMINI_KEY: 'store_dashboard_gemini_key'
         };
 
@@ -529,7 +554,6 @@
             careCnt: 24
         };
 
-        // 기본 수당: 전체금액, 모델수당, 프리드가입건수
         const defaultCommission = {
             total: 2850000,
             model: 1250000,
@@ -540,6 +564,7 @@
         let vipState = {};
         let currentPerf = { ...defaultPerformance };
         let currentComm = { ...defaultCommission };
+        let loadedCommTable = null;
         let currentVipTab = 'todo';
 
         function initAppStorage() {
@@ -555,6 +580,9 @@
             const savedComm = localStorage.getItem(STORAGE_KEYS.COMMISSION);
             currentComm = savedComm ? JSON.parse(savedComm) : { ...defaultCommission };
 
+            const savedTable = localStorage.getItem(STORAGE_KEYS.COMM_TABLE);
+            loadedCommTable = savedTable ? JSON.parse(savedTable) : null;
+
             document.getElementById('input-total-sales').value = currentPerf.totalSales;
             document.getElementById('input-net-sales').value = currentPerf.netSales;
             document.getElementById('input-sub-cnt').value = currentPerf.subCnt;
@@ -562,6 +590,7 @@
 
             updatePerformanceDisplay();
             updateCommissionDisplay();
+            updateCommissionTableUI();
         }
 
         function updatePerformanceDisplay() {
@@ -571,7 +600,7 @@
             document.getElementById('display-care-cnt').textContent = currentPerf.careCnt || 0;
         }
 
-        // ================= [수당 현황 연동 로직 (단순화 버전)] =================
+        // ================= [수당 현황 연동 로직] =================
         function updateCommissionDisplay() {
             const total = Number(currentComm.total || 0);
             const model = Number(currentComm.model || 0);
@@ -601,6 +630,139 @@
             currentComm = { total, model, freedCnt };
             localStorage.setItem(STORAGE_KEYS.COMMISSION, JSON.stringify(currentComm));
             updateCommissionDisplay();
+        }
+
+        // ================= [엑셀 수당표 업로드 및 파싱 엔진] =================
+        function triggerExcelUpload() {
+            document.getElementById('excel-file-input').click();
+        }
+
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet);
+
+                    if (!json || json.length === 0) {
+                        alert('엑셀 파일에 데이터가 비어있습니다.');
+                        return;
+                    }
+
+                    // 열 이름 자동 감지 (모델명/코드 열 & 수당/금액 열)
+                    const sampleRow = json[0];
+                    const keys = Object.keys(sampleRow);
+                    const modelKey = keys.find(k => /모델|코드|상품|model|code/i.test(k)) || keys[0];
+                    const allowanceKey = keys.find(k => /수당|인센티브|금액|단가|price|amount|allowance/i.test(k)) || keys[1] || keys[0];
+
+                    const rateMap = {};
+                    let validCount = 0;
+
+                    json.forEach(row => {
+                        const rawModel = row[modelKey];
+                        const rawAmount = row[allowanceKey];
+                        if (rawModel) {
+                            const cleanModel = String(rawModel).trim().toUpperCase();
+                            const cleanAmount = Number(String(rawAmount || 0).replace(/[^0-9.-]+/g, '')) || 0;
+                            rateMap[cleanModel] = cleanAmount;
+                            validCount++;
+                        }
+                    });
+
+                    loadedCommTable = {
+                        fileName: file.name,
+                        uploadDate: new Date().toLocaleDateString('ko-KR'),
+                        count: validCount,
+                        rates: rateMap
+                    };
+
+                    localStorage.setItem(STORAGE_KEYS.COMM_TABLE, JSON.stringify(loadedCommTable));
+                    
+                    // 등록된 배송 목록 모델들과 대조하여 모델 수당 자동 계산
+                    autoCalculateModelCommissionFromTable();
+
+                    updateCommissionTableUI();
+                    updateCommissionDisplay();
+
+                    alert(`🎉 엑셀 수당표 [${file.name}] 등록 완료!\n총 ${validCount.toLocaleString()}개 모델의 수당 데이터가 성공적으로 연동되었습니다.`);
+
+                } catch (err) {
+                    console.error(err);
+                    alert(`엑셀 파일 처리 중 오류가 발생했습니다: ${err.message}\n올바른 엑셀 형식(.xlsx, .xls)인지 확인해주세요.`);
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 수당표 상태 배너 UI 업데이트
+        function updateCommissionTableUI() {
+            const iconEl = document.getElementById('comm-table-status-icon');
+            const textEl = document.getElementById('comm-table-status-text');
+            const delBtn = document.getElementById('comm-table-delete-btn');
+            const autoBadge = document.getElementById('badge-auto-calc');
+
+            if (loadedCommTable && loadedCommTable.fileName) {
+                iconEl.textContent = '✅';
+                textEl.innerHTML = `<b class="text-emerald-700">${loadedCommTable.fileName}</b> (${loadedCommTable.count}개 모델 연동됨)`;
+                delBtn.classList.remove('hidden');
+                autoBadge.classList.remove('hidden');
+            } else {
+                iconEl.textContent = '📊';
+                textEl.textContent = '수당표 엑셀을 첨부하면 모델별 수당이 자동 매칭됩니다.';
+                delBtn.classList.add('hidden');
+                autoBadge.classList.add('hidden');
+            }
+        }
+
+        // 엑셀 수당표 연동 해제
+        function deleteCommissionTable() {
+            if (confirm('등록된 엑셀 수당표 연동을 해제하시겠습니까?')) {
+                localStorage.removeItem(STORAGE_KEYS.COMM_TABLE);
+                loadedCommTable = null;
+                updateCommissionTableUI();
+                alert('수당표 연동이 해제되었습니다.');
+            }
+        }
+
+        // 등록된 배송 목록(물류)의 모델명과 엑셀 수당표를 대조하여 모델 수당 자동 산출
+        function autoCalculateModelCommissionFromTable() {
+            if (!loadedCommTable || !loadedCommTable.rates) return;
+
+            let totalMatchedCommission = 0;
+            const rates = loadedCommTable.rates;
+
+            (vipState.logistics || []).forEach(logItem => {
+                if (!logItem.item) return;
+                // 여러 모델이 쉼표나 슬래시로 적혀있는 경우 분리하여 검색
+                const models = logItem.item.split(/[,/+\n]/).map(m => m.trim().toUpperCase());
+                models.forEach(m => {
+                    if (rates[m]) {
+                        totalMatchedCommission += rates[m];
+                    } else {
+                        // 부분 일치 검사 (예: 사용자가 입력한 모델코드가 엑셀 키에 포함된 경우)
+                        for (const key in rates) {
+                            if (key && (m.includes(key) || key.includes(m)) && m.length >= 6) {
+                                totalMatchedCommission += rates[key];
+                                break;
+                            }
+                        }
+                    }
+                });
+            });
+
+            if (totalMatchedCommission > 0) {
+                currentComm.model = totalMatchedCommission;
+                currentComm.total = (currentComm.total || 0) - (currentComm.model || 0) + totalMatchedCommission;
+                localStorage.setItem(STORAGE_KEYS.COMMISSION, JSON.stringify(currentComm));
+            }
         }
 
         // ================= [AI 전표 스캔 엔진] =================
@@ -861,6 +1023,10 @@
                 updatePerformanceDisplay();
                 document.getElementById('input-total-sales').value = currentPerf.totalSales;
             }
+
+            // 엑셀 수당표가 있다면 모델 수당 자동 재계산
+            autoCalculateModelCommissionFromTable();
+            updateCommissionDisplay();
 
             closeScanResultModal();
             renderWeeklyBar();
