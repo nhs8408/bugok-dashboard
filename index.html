@@ -97,7 +97,7 @@
 
             </div>
 
-            <!-- ================= [NEW] 11월 수당 현황 카드 ================= -->
+            <!-- ================= [수정됨] 11월 수당 현황 카드 ================= -->
             <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-3">
                 <div class="flex items-center justify-between">
                     <h3 class="font-bold text-sm text-slate-800 flex items-center space-x-1.5">
@@ -106,34 +106,26 @@
                     <button onclick="openCommissionModal()" class="text-xs text-amber-700 font-bold bg-amber-50 hover:bg-amber-100 border border-amber-200/60 px-2.5 py-1 rounded-xl transition">수당 수정</button>
                 </div>
 
-                <!-- 총 예상 수당 하이라이트 -->
-                <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent p-3.5 rounded-2xl border border-amber-200/70 flex items-center justify-between">
+                <!-- 11월 총 수당 (전체 금액) 메인 디스플레이 -->
+                <div class="bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent p-4 rounded-2xl border border-amber-200 flex items-center justify-between">
                     <div>
-                        <span class="text-[11px] font-bold text-amber-900">11월 총 예상 수당</span>
-                        <p class="text-[10px] text-slate-400">세부 인센티브 합산 기준</p>
+                        <span class="text-[11px] font-bold text-amber-900">11월 총 수당</span>
+                        <p class="text-[10px] text-slate-400">당월 전체 수당 합계</p>
                     </div>
-                    <div class="text-lg font-black text-amber-600">
+                    <div class="text-xl font-black text-amber-600">
                         <span id="display-comm-total">0</span>원
                     </div>
                 </div>
 
-                <!-- 세부 수당 그리드 -->
+                <!-- 하단: 모델 수당 & 프리드 가입 건수 -->
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                        <span class="text-slate-400 text-[11px]">판매/실판 인센티브</span>
-                        <div class="text-sm font-black text-slate-800 mt-0.5"><span id="display-comm-sales">0</span>원</div>
+                        <span class="text-slate-400 text-[11px]">모델 수당</span>
+                        <div class="text-sm font-black text-indigo-600 mt-0.5"><span id="display-comm-model">0</span>원</div>
                     </div>
                     <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                        <span class="text-slate-400 text-[11px]">가전 구독 수당</span>
-                        <div class="text-sm font-black text-indigo-600 mt-0.5"><span id="display-comm-sub">0</span>원</div>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                        <span class="text-slate-400 text-[11px]">제휴/부가 (카드·케어·상조)</span>
-                        <div class="text-sm font-black text-emerald-600 mt-0.5"><span id="display-comm-extra">0</span>원</div>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                        <span class="text-slate-400 text-[11px]">달성 시상금/프로모션</span>
-                        <div class="text-sm font-black text-rose-600 mt-0.5"><span id="display-comm-bonus">0</span>원</div>
+                        <span class="text-slate-400 text-[11px]">프리드 가입</span>
+                        <div class="text-sm font-black text-emerald-600 mt-0.5"><span id="display-comm-freed">0</span>건</div>
                     </div>
                 </div>
             </div>
@@ -297,7 +289,7 @@
     </main>
 
 
-    <!-- ================= [MODAL] 수당 수정 모달 ================= -->
+    <!-- ================= [MODAL] 수당 수정 모달 (단순화됨) ================= -->
     <div id="commission-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-2 border-b border-slate-100">
@@ -308,30 +300,30 @@
                 <button onclick="closeCommissionModal()" class="text-slate-400 font-bold">✕</button>
             </div>
 
-            <p class="text-xs text-slate-500">세부 항목별 수당을 입력하시면 총 수당이 자동 합산되어 저장됩니다.</p>
+            <p class="text-xs text-slate-500">당월 총 수당과 모델 수당, 프리드 가입 건수를 입력해주세요.</p>
 
             <div class="space-y-3 text-xs">
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">판매 / 실판 인센티브 (원)</label>
-                    <input type="number" id="input-comm-sales" oninput="updateModalCommissionTotal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
+                    <label class="font-bold text-amber-900 block mb-1">11월 총 수당 (전체 금액)</label>
+                    <div class="relative">
+                        <input type="number" id="input-comm-total" placeholder="0" class="w-full bg-amber-50/50 border border-amber-200 rounded-xl p-2.5 font-black text-amber-600 pr-8">
+                        <span class="absolute right-3 top-2.5 text-xs font-bold text-amber-500">원</span>
+                    </div>
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">가전 구독 유치 수당 (원)</label>
-                    <input type="number" id="input-comm-sub" oninput="updateModalCommissionTotal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
+                    <label class="font-bold text-slate-700 block mb-1">모델 수당</label>
+                    <div class="relative">
+                        <input type="number" id="input-comm-model" placeholder="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800 pr-8">
+                        <span class="absolute right-3 top-2.5 text-xs font-bold text-slate-400">원</span>
+                    </div>
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">제휴 / 부가 수당 (카드·케어·상조 등) (원)</label>
-                    <input type="number" id="input-comm-extra" oninput="updateModalCommissionTotal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
+                    <label class="font-bold text-slate-700 block mb-1">프리드 가입 건수</label>
+                    <div class="relative">
+                        <input type="number" id="input-comm-freed-cnt" placeholder="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800 pr-8">
+                        <span class="absolute right-3 top-2.5 text-xs font-bold text-slate-400">건</span>
+                    </div>
                 </div>
-                <div>
-                    <label class="font-bold text-slate-700 block mb-1">목표 달성 시상금 / 프로모션 (원)</label>
-                    <input type="number" id="input-comm-bonus" oninput="updateModalCommissionTotal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
-                </div>
-            </div>
-
-            <div class="bg-amber-50 p-3.5 rounded-2xl border border-amber-200/80 flex justify-between items-center text-xs">
-                <span class="font-bold text-amber-900">예상 총 수당 합계</span>
-                <span id="modal-comm-total-calc" class="font-black text-amber-600 text-base">0원</span>
             </div>
 
             <button onclick="saveCommissionData(); closeCommissionModal();" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-2xl font-black text-xs shadow-md transition">수당 저장하기 ✨</button>
@@ -492,7 +484,7 @@
 
     <!-- 푸터 -->
     <footer class="text-center py-4 text-[11px] text-slate-500">
-        Store Dashboard & Smart Quote Engine v4.3 (Commission Dashboard Enabled)
+        Store Dashboard & Smart Quote Engine v4.4 (Simplified Commission View)
     </footer>
 
 
@@ -537,11 +529,11 @@
             careCnt: 24
         };
 
+        // 기본 수당: 전체금액, 모델수당, 프리드가입건수
         const defaultCommission = {
-            sales: 1450000,
-            sub: 760000,
-            extra: 420000,
-            bonus: 300000
+            total: 2850000,
+            model: 1250000,
+            freedCnt: 6
         };
 
         let setOffDays = new Set();
@@ -579,27 +571,21 @@
             document.getElementById('display-care-cnt').textContent = currentPerf.careCnt || 0;
         }
 
-        // ================= [수당 현황 연동 로직] =================
+        // ================= [수당 현황 연동 로직 (단순화 버전)] =================
         function updateCommissionDisplay() {
-            const sales = Number(currentComm.sales || 0);
-            const sub = Number(currentComm.sub || 0);
-            const extra = Number(currentComm.extra || 0);
-            const bonus = Number(currentComm.bonus || 0);
-            const total = sales + sub + extra + bonus;
+            const total = Number(currentComm.total || 0);
+            const model = Number(currentComm.model || 0);
+            const freedCnt = Number(currentComm.freedCnt || 0);
 
             document.getElementById('display-comm-total').textContent = total.toLocaleString();
-            document.getElementById('display-comm-sales').textContent = sales.toLocaleString();
-            document.getElementById('display-comm-sub').textContent = sub.toLocaleString();
-            document.getElementById('display-comm-extra').textContent = extra.toLocaleString();
-            document.getElementById('display-comm-bonus').textContent = bonus.toLocaleString();
+            document.getElementById('display-comm-model').textContent = model.toLocaleString();
+            document.getElementById('display-comm-freed').textContent = freedCnt;
         }
 
         function openCommissionModal() {
-            document.getElementById('input-comm-sales').value = currentComm.sales || 0;
-            document.getElementById('input-comm-sub').value = currentComm.sub || 0;
-            document.getElementById('input-comm-extra').value = currentComm.extra || 0;
-            document.getElementById('input-comm-bonus').value = currentComm.bonus || 0;
-            updateModalCommissionTotal();
+            document.getElementById('input-comm-total').value = currentComm.total || 0;
+            document.getElementById('input-comm-model').value = currentComm.model || 0;
+            document.getElementById('input-comm-freed-cnt').value = currentComm.freedCnt || 0;
             document.getElementById('commission-modal').classList.remove('hidden');
         }
 
@@ -607,22 +593,12 @@
             document.getElementById('commission-modal').classList.add('hidden');
         }
 
-        function updateModalCommissionTotal() {
-            const s = Number(document.getElementById('input-comm-sales')?.value || 0);
-            const sub = Number(document.getElementById('input-comm-sub')?.value || 0);
-            const e = Number(document.getElementById('input-comm-extra')?.value || 0);
-            const b = Number(document.getElementById('input-comm-bonus')?.value || 0);
-            const tot = s + sub + e + b;
-            document.getElementById('modal-comm-total-calc').textContent = `${tot.toLocaleString()}원`;
-        }
-
         function saveCommissionData() {
-            const sales = Number(document.getElementById('input-comm-sales')?.value || 0);
-            const sub = Number(document.getElementById('input-comm-sub')?.value || 0);
-            const extra = Number(document.getElementById('input-comm-extra')?.value || 0);
-            const bonus = Number(document.getElementById('input-comm-bonus')?.value || 0);
+            const total = Number(document.getElementById('input-comm-total')?.value || 0);
+            const model = Number(document.getElementById('input-comm-model')?.value || 0);
+            const freedCnt = Number(document.getElementById('input-comm-freed-cnt')?.value || 0);
 
-            currentComm = { sales, sub, extra, bonus };
+            currentComm = { total, model, freedCnt };
             localStorage.setItem(STORAGE_KEYS.COMMISSION, JSON.stringify(currentComm));
             updateCommissionDisplay();
         }
@@ -701,7 +677,6 @@
                     }]
                 };
 
-                // 1단계: 사용자 키에서 사용 가능한 최신 모델 동적 조회 (ListModels)
                 let endpoints = [];
                 try {
                     const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
@@ -722,7 +697,6 @@
                     console.warn('동적 모델 목록 조회 스킵:', e);
                 }
 
-                // 2단계: 최신 표준 모델 후보군
                 const fallbackModels = [
                     'gemini-2.5-flash',
                     'gemini-2.0-flash',
