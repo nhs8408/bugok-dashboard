@@ -127,11 +127,13 @@
 
             <!-- 주요 메뉴 카드 리스트 -->
             <div class="space-y-2.5">
+                <!-- 플랜 계산기 버튼 (Hi-Plan 내장 탭 열기) -->
                 <button onclick="switchTab('hiplan')" class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 p-4 rounded-2xl flex items-center justify-between shadow-sm transition group text-left">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg font-bold">🧮</div>
                         <div>
-                            <h4 class="font-bold text-sm text-slate-800 group-hover:text-indigo-600 transition">플랜 계산기 (Hi-Plan 내장형)</h4>
+                            <h4 class="font-bold text-sm text-slate-800 group-hover:text-indigo-600 transition">플랜 계산기 (Hi-Plan)</h4>
+                            <p class="text-xs text-slate-400">hi-plan.netlify.app 바로 연결</p>
                         </div>
                     </div>
                     <span class="text-xs font-bold text-indigo-600">열기 →</span>
@@ -232,59 +234,23 @@
             </div>
         </div>
 
-        <!-- ================= [TAB 4] 플랜 계산기 ================= -->
+        <!-- ================= [TAB 4] 플랜 계산기 (Hi-Plan 내장 iFrame) ================= -->
         <div id="tab-hiplan" class="hidden space-y-4">
-            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-4">
+            <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200/80 flex flex-col space-y-3">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                     <div class="flex items-center space-x-2">
                         <span class="text-base">🧮</span>
-                        <h2 class="font-bold text-sm text-slate-800">플랜 계산기 (Hi-Plan 내장)</h2>
+                        <h2 class="font-bold text-sm text-slate-800">플랜 계산기 (Hi-Plan)</h2>
                     </div>
-                    <button onclick="switchTab('main')" class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-xl">뒤로</button>
+                    <div class="flex items-center space-x-1.5">
+                        <button onclick="reloadHiPlanIframe()" title="새로고침" class="text-xs font-bold text-slate-500 hover:text-slate-800 bg-slate-100 px-2 py-1 rounded-xl transition">🔄</button>
+                        <button onclick="switchTab('main')" class="text-xs font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-xl transition">뒤로</button>
+                    </div>
                 </div>
 
-                <div class="space-y-3 text-xs">
-                    <div>
-                        <label class="font-bold text-slate-700 block mb-1">월 정상 구독료 (원)</label>
-                        <input type="number" id="hiplan-base-price" value="50000" oninput="calculateHiPlan()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-
-                    <div>
-                        <label class="font-bold text-slate-700 block mb-1">구독 약정 기간</label>
-                        <select id="hiplan-term" onchange="calculateHiPlan()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800 focus:outline-none">
-                            <option value="36">36개월</option>
-                            <option value="60" selected>60개월 (5년 무상 A/S 추천)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="font-bold text-slate-700 block mb-1">제휴카드 할인 (월 실적)</label>
-                        <select id="hiplan-card" onchange="calculateHiPlan()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800 focus:outline-none">
-                            <option value="18000">30만 원 실적 (-18,000원)</option>
-                            <option value="23000">70만 원 실적 (-23,000원)</option>
-                            <option value="30000">150만 원 실적 (-30,000원)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="font-bold text-slate-700 block mb-1">프리드 구좌 (월 지원금)</label>
-                        <select id="hiplan-freed" onchange="calculateHiPlan()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800 focus:outline-none">
-                            <option value="15000">플러스90 1구좌 (-15,000원)</option>
-                            <option value="30000">플러스90 2구좌 (-30,000원)</option>
-                            <option value="0">선택 안 함 (0원)</option>
-                        </select>
-                    </div>
-
-                    <div class="bg-indigo-900 text-white p-4 rounded-2xl space-y-2 mt-4 shadow-lg">
-                        <div class="flex justify-between text-slate-300 text-[11px]">
-                            <span>월 총 혜택 할인금액</span>
-                            <span id="hiplan-saving-display">-33,000원 할인</span>
-                        </div>
-                        <div class="flex justify-between items-center pt-2 border-t border-indigo-800">
-                            <span class="font-bold text-sm">예상 최종 월 체감가</span>
-                            <span class="text-lg font-black text-amber-400"><span id="hiplan-final-display">17,000</span>원 /월</span>
-                        </div>
-                    </div>
+                <!-- Hi-Plan 내장 iframe (모바일 뷰에 맞춤) -->
+                <div class="w-full rounded-2xl overflow-hidden border border-slate-200 bg-slate-50" style="height: 75vh; min-height: 580px;">
+                    <iframe id="hiplan-iframe" src="https://hi-plan.netlify.app/" class="w-full h-full border-0" title="Hi-Plan 계산기" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
@@ -445,7 +411,7 @@
 
     <!-- 푸터 -->
     <footer class="text-center py-4 text-[11px] text-slate-500">
-        Store Dashboard & Smart Quote Engine v3.9 (Model Code & Sales Accumulation)
+        Store Dashboard & Smart Quote Engine v4.0 (Hi-Plan Inline View)
     </footer>
 
 
@@ -559,7 +525,6 @@
                 const base64Data = await resizeImageToBase64(file, 1400, 0.85);
                 const apiKey = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
 
-                // 모델명(상품코드)과 접수금액(총판)을 명확하게 요구하는 프롬프트
                 const requestBody = {
                     contents: [{
                         parts: [
@@ -593,10 +558,8 @@
                 };
 
                 const candidates = [
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent',
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent',
-                    'https://generativelanguage.googleapis.com/v1/models/gemini-3.8-flash:generateContent',
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
                 ];
 
                 let resJson = null;
@@ -641,7 +604,6 @@
                 }
                 const parsed = JSON.parse(jsonMatch[0]);
 
-                // 결과 모달에 값 채우기
                 document.getElementById('scan-input-name').value = parsed.name || '고객님';
                 document.getElementById('scan-input-date').value = parsed.dateStr || '2026-11-05';
                 document.getElementById('scan-input-item').value = parsed.item || 'RP13C1022Z1';
@@ -658,7 +620,6 @@
             }
         }
 
-        // 브라우저 캔버스를 이용한 모바일 사진 고속 리사이징
         function resizeImageToBase64(file, maxDimension, quality) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -694,7 +655,6 @@
             document.getElementById('scan-result-modal').classList.add('hidden');
         }
 
-        // 스캔 결과 확정 등록 (배송일정 등록 + 총판 금액 누적 합산)
         function confirmScanDelivery() {
             const name = document.getElementById('scan-input-name').value.trim();
             const dateStr = document.getElementById('scan-input-date').value;
@@ -706,7 +666,6 @@
                 return;
             }
 
-            // 기준일(2026-11-04)과 날짜 차이 계산
             const baseDate = new Date('2026-11-04');
             const targetDate = new Date(dateStr);
             const diffDays = Math.round((targetDate - baseDate) / (1000 * 60 * 60 * 24));
@@ -725,7 +684,6 @@
                 type = 'upcoming';
             }
 
-            // 1. VIP 배송 목록에 추가
             if (!vipState.logistics) vipState.logistics = [];
             vipState.logistics.push({
                 id: Date.now(),
@@ -739,12 +697,10 @@
             });
             localStorage.setItem(STORAGE_KEYS.VIP_STATE, JSON.stringify(vipState));
 
-            // 2. 총판 실적에 해당 전표 금액 누적 합산
             if (amount > 0) {
                 currentPerf.totalSales = (currentPerf.totalSales || 0) + amount;
                 localStorage.setItem(STORAGE_KEYS.PERF, JSON.stringify(currentPerf));
 
-                // 대시보드 화면 및 수정 모달 값 갱신
                 document.getElementById('display-total-sales').textContent = Number(currentPerf.totalSales).toLocaleString();
                 document.getElementById('input-total-sales').value = currentPerf.totalSales;
             }
@@ -766,7 +722,14 @@
                 if (el) el.classList.toggle('hidden', t !== tableName);
             });
             if (tableName === 'offdays') renderMonthCalendar();
-            if (tableName === 'hiplan') calculateHiPlan();
+        }
+
+        // 플랜 계산기 iFrame 새로고침
+        function reloadHiPlanIframe() {
+            const iframe = document.getElementById('hiplan-iframe');
+            if (iframe) {
+                iframe.src = 'https://hi-plan.netlify.app/';
+            }
         }
 
         function renderWeeklyBar() {
@@ -1023,7 +986,7 @@
             document.getElementById('display-care-cnt').textContent = careCnt;
         }
 
-        // 견적기 & 플랜 계산기
+        // 견적기 관련
         let currentTerm = 60;
         let cardTierAmount = 18000;
         let freedAllowMonthly = 15000;
@@ -1058,20 +1021,10 @@
             document.getElementById('final-price-display').textContent = finalPrice.toLocaleString();
         }
 
-        function calculateHiPlan() {
-            const basePrice = Number(document.getElementById('hiplan-base-price')?.value || 50000);
-            const cardDisc = Number(document.getElementById('hiplan-card')?.value || 18000);
-            const freedDisc = Number(document.getElementById('hiplan-freed')?.value || 15000);
-            const totalSaving = cardDisc + freedDisc;
-            document.getElementById('hiplan-saving-display').textContent = `-${totalSaving.toLocaleString()}원 할인`;
-            document.getElementById('hiplan-final-display').textContent = Math.max(0, basePrice - totalSaving).toLocaleString();
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             initAppStorage();
             renderWeeklyBar();
             calculateQuote();
-            calculateHiPlan();
         });
     </script>
 </body>
